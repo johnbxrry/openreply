@@ -181,9 +181,9 @@ export default function CampaignDetailPage() {
           </Link>
         </div>
         <div className="flex items-center gap-2">
-          <h1 className="truncate text-lg font-semibold">{campaign.name}</h1>
+          <h1 className="truncate text-lg font-medium">{campaign.name}</h1>
           <span
-            className={`shrink-0 rounded px-2 py-0.5 text-xs font-semibold ${
+            className={`shrink-0 rounded px-2 py-0.5 text-xs font-medium ${
               campaign.isActive
                 ? "bg-success/10 text-success"
                 : "bg-muted/10 text-muted"
@@ -329,7 +329,7 @@ export default function CampaignDetailPage() {
             {metrics.map((m) => (
               <div key={m.label} className="panel rounded p-4">
                 <p className="text-sm text-muted">{m.label}</p>
-                <p className="mt-1 text-2xl font-semibold text-foreground">
+                <p className="mt-1 text-2xl font-medium text-foreground">
                   {m.value}
                 </p>
               </div>
@@ -383,7 +383,7 @@ export default function CampaignDetailPage() {
 function Summary({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="space-y-2">
-      <h2 className="text-sm font-semibold text-foreground">{title}</h2>
+      <h2 className="text-sm font-medium text-foreground">{title}</h2>
       {children}
     </div>
   );

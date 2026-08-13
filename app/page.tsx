@@ -29,7 +29,7 @@ function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded border border-border bg-background/40 p-4">
       <p className="text-sm text-muted">{label}</p>
-      <p className="mt-1 text-2xl font-semibold text-foreground">{value}</p>
+      <p className="mt-1 text-2xl font-medium text-foreground">{value}</p>
     </div>
   );
 }
@@ -54,7 +54,7 @@ function OverviewPreview() {
     <AppWindow label="app / overview">
       <div className="flex items-end justify-between">
         <div>
-          <h3 className="text-base font-semibold text-foreground">Overview</h3>
+          <h3 className="text-base font-medium text-foreground">Overview</h3>
           <p className="mt-1 text-xs text-muted">
             Recent — 24 posts from @studio.store
           </p>
@@ -72,7 +72,7 @@ function OverviewPreview() {
 
       <div className="mt-4 rounded border border-border bg-background/40 p-4">
         <div className="flex items-baseline justify-between">
-          <p className="text-sm font-semibold text-foreground">
+          <p className="text-sm font-medium text-foreground">
             Followers over time
           </p>
           <p className="text-xs text-muted">
@@ -99,7 +99,7 @@ function OverviewPreview() {
       </div>
 
       <div className="mt-4 rounded border border-border bg-background/40 p-4">
-        <p className="text-sm font-semibold text-foreground">Posts</p>
+        <p className="text-sm font-medium text-foreground">Posts</p>
         <table className="mt-3 w-full text-sm">
           <thead>
             <tr className="border-b border-border text-left text-[11px] uppercase tracking-wide text-muted">
@@ -129,7 +129,7 @@ function MatchedCommentCard() {
   return (
     <div className="w-64 rounded-lg border border-border bg-surface p-4 shadow-2xl shadow-black/50">
       <p className="text-xs text-muted">New comment</p>
-      <p className="mt-1 text-sm font-semibold text-foreground">@maya.co</p>
+      <p className="mt-1 text-sm font-medium text-foreground">@maya.co</p>
       <p className="mt-1 text-sm text-muted">LINK please</p>
       <div className="mt-3 border-t border-border pt-3">
         <p className="text-xs text-muted">
@@ -149,7 +149,7 @@ export default function Home() {
       <header className="sticky top-0 z-40 border-b border-border bg-background">
         <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-5 sm:px-6 lg:px-8">
           <Link href="/" className="flex items-center gap-3" aria-label="OpenReply home">
-            <span className="font-heading text-lg font-medium text-foreground">
+            <span className="text-lg font-medium text-foreground">
               OpenReply
             </span>
           </Link>
@@ -164,10 +164,10 @@ export default function Home() {
       </header>
 
       <section className="mx-auto w-full max-w-6xl px-5 pt-20 sm:px-6 sm:pt-28 lg:px-8">
-        <h1 className="font-heading text-4xl font-medium leading-[1.08] tracking-[-0.02em] sm:text-5xl lg:text-[56px] lg:leading-[1.05]">
-          <span className="block text-foreground">every comment, answered</span>
-          <span className="block text-muted">the open-source engine for</span>
-          <span className="block text-muted">brands scaling Instagram DMs</span>
+        <h1 className="text-4xl font-normal leading-[1.15] tracking-[-0.02em] sm:text-5xl lg:text-[56px] lg:leading-[1.0]">
+          <span className="block text-foreground">Insta-analytics, made simple.</span>
+          <span className="block text-muted">The open source engine for</span>
+          <span className="block text-muted">Instagram analytics and DMs.</span>
         </h1>
 
         <p className="mt-8 max-w-xl text-lg leading-7 text-muted">
@@ -203,7 +203,7 @@ export default function Home() {
 
       <footer className="border-t border-border py-8">
         <div className="mx-auto flex w-full max-w-6xl items-center px-5 text-sm text-muted sm:px-6 lg:px-8">
-          <span className="font-heading font-medium">OpenReply</span>
+          <span className="font-medium">OpenReply</span>
         </div>
       </footer>
     </main>

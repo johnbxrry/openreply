@@ -116,7 +116,7 @@ function Notice({
 }) {
   return (
     <div className={`rounded border p-4 text-sm ${TONE_CLASSES[tone]}`}>
-      <p className="font-semibold">{title}</p>
+      <p className="font-medium">{title}</p>
       <div className="mt-1 opacity-90">{children}</div>
     </div>
   );

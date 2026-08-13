@@ -70,7 +70,7 @@ function Section({
 }) {
   return (
     <section className="panel rounded p-4 sm:p-6">
-      <h2 className="text-base font-semibold text-foreground">{title}</h2>
+      <h2 className="text-base font-medium text-foreground">{title}</h2>
       <div className="mt-4">{children}</div>
     </section>
   );
@@ -124,7 +124,7 @@ export default function DiagnosticsPage() {
     <div className="mx-auto max-w-5xl space-y-6">
       <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">
+          <h1 className="text-2xl font-medium text-foreground">
             Production Diagnostics
           </h1>
           <p className="mt-1 text-sm text-muted">
@@ -133,7 +133,7 @@ export default function DiagnosticsPage() {
         </div>
         <button
           onClick={() => void refreshDiagnostics()}
-          className="rounded border border-border bg-surface px-4 py-2 text-sm font-semibold text-foreground transition hover:border-border-hover"
+          className="rounded border border-border bg-surface px-4 py-2 text-sm font-medium text-foreground transition hover:border-border-hover"
         >
           Refresh
         </button>
@@ -141,11 +141,11 @@ export default function DiagnosticsPage() {
 
       <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3">
         <div className="panel rounded p-4 sm:p-5">
-          <p className="text-xs font-semibold uppercase text-muted">
+          <p className="text-xs font-medium uppercase text-muted">
             Worker health
           </p>
           <p
-            className={`mt-3 text-2xl font-bold ${
+            className={`mt-3 text-2xl font-medium ${
               data?.workerHealth.healthy ? "text-success" : "text-warning"
             }`}
           >
@@ -159,10 +159,10 @@ export default function DiagnosticsPage() {
         </div>
         {["waiting", "active", "delayed", "failed"].map((key) => (
           <div key={key} className="panel rounded p-4 sm:p-5">
-            <p className="text-xs font-semibold uppercase text-muted">
+            <p className="text-xs font-medium uppercase text-muted">
               Queue {key}
             </p>
-            <p className="mt-3 text-2xl font-bold text-foreground">
+            <p className="mt-3 text-2xl font-medium text-foreground">
               {data?.queueCounts[key] ?? 0}
             </p>
           </div>
@@ -178,10 +178,10 @@ export default function DiagnosticsPage() {
                 className="rounded border border-border bg-surface/50 p-4"
               >
                 <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-1">
-                  <p className="min-w-0 flex-1 break-words text-sm font-semibold text-foreground">
+                  <p className="min-w-0 flex-1 break-words text-sm font-medium text-foreground">
                     {alert.message}
                   </p>
-                  <span className="shrink-0 rounded-full bg-error/10 px-2 py-1 text-xs font-semibold text-error">
+                  <span className="shrink-0 rounded-full bg-error/10 px-2 py-1 text-xs font-medium text-error">
                     {alert.level}
                   </span>
                 </div>
@@ -204,7 +204,7 @@ export default function DiagnosticsPage() {
               {data.dmFailures.map((item) => (
                 <div key={item.id} className="border-b border-border pb-3 last:border-0">
                   <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-1">
-                    <p className="min-w-0 flex-1 truncate text-sm font-semibold text-foreground">
+                    <p className="min-w-0 flex-1 truncate text-sm font-medium text-foreground">
                       {item.automation.name}
                     </p>
                     <StatusBadge status={item.status} />
@@ -228,7 +228,7 @@ export default function DiagnosticsPage() {
             <div className="space-y-3">
               {data.webhookFailures.map((event) => (
                 <div key={event.id} className="border-b border-border pb-3 last:border-0">
-                  <p className="text-sm font-semibold text-foreground">
+                  <p className="text-sm font-medium text-foreground">
                     {event.object ?? "Instagram webhook"}
                   </p>
                   <p className="mt-1 text-xs text-error">
@@ -252,7 +252,7 @@ export default function DiagnosticsPage() {
             <div className="space-y-3">
               {data.tokenRefreshFailures.map((event) => (
                 <div key={event.id} className="border-b border-border pb-3 last:border-0">
-                  <p className="text-sm font-semibold text-foreground">
+                  <p className="text-sm font-medium text-foreground">
                     {event.message}
                   </p>
                   <p className="mt-1 text-xs text-muted">
@@ -273,7 +273,7 @@ export default function DiagnosticsPage() {
           <div className="space-y-3">
             {data.operationalEvents.map((event) => (
               <div key={event.id} className="grid gap-2 border-b border-border pb-3 last:border-0 sm:grid-cols-[140px_1fr_auto]">
-                <p className="text-xs font-semibold text-muted">{event.source}</p>
+                <p className="text-xs font-medium text-muted">{event.source}</p>
                 <p className="text-sm text-foreground">{event.message}</p>
                 <p className="text-xs text-muted">{formatDate(event.createdAt)}</p>
               </div>

@@ -43,7 +43,7 @@ export default function TopBar({
         >
           Menu
         </button>
-        <h1 className="truncate text-base font-semibold sm:text-lg">{title}</h1>
+        <h1 className="truncate text-base font-medium sm:text-lg">{title}</h1>
       </div>
 
       {instagramAccountCount > 0 ? (

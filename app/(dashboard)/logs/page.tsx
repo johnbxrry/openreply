@@ -137,12 +137,12 @@ export default function LogsPage() {
           <table className="w-full min-w-[760px] text-sm">
             <thead>
               <tr className="border-b border-border text-left">
-                <th className="px-4 py-4 text-xs font-semibold text-muted uppercase tracking-wider sm:px-6">Commenter</th>
-                <th className="px-4 py-4 text-xs font-semibold text-muted uppercase tracking-wider sm:px-6">Comment</th>
-                <th className="px-4 py-4 text-xs font-semibold text-muted uppercase tracking-wider sm:px-6">Campaign</th>
-                <th className="px-4 py-4 text-xs font-semibold text-muted uppercase tracking-wider sm:px-6">Account</th>
-                <th className="px-4 py-4 text-xs font-semibold text-muted uppercase tracking-wider sm:px-6">Status</th>
-                <th className="px-4 py-4 text-xs font-semibold text-muted uppercase tracking-wider sm:px-6">Time</th>
+                <th className="px-4 py-4 text-xs font-medium text-muted uppercase tracking-wider sm:px-6">Commenter</th>
+                <th className="px-4 py-4 text-xs font-medium text-muted uppercase tracking-wider sm:px-6">Comment</th>
+                <th className="px-4 py-4 text-xs font-medium text-muted uppercase tracking-wider sm:px-6">Campaign</th>
+                <th className="px-4 py-4 text-xs font-medium text-muted uppercase tracking-wider sm:px-6">Account</th>
+                <th className="px-4 py-4 text-xs font-medium text-muted uppercase tracking-wider sm:px-6">Status</th>
+                <th className="px-4 py-4 text-xs font-medium text-muted uppercase tracking-wider sm:px-6">Time</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">

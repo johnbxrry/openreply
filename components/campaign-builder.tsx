@@ -71,7 +71,7 @@ function Section({
 }) {
   return (
     <div className="space-y-3">
-      <h2 className="text-sm font-semibold text-foreground">{title}</h2>
+      <h2 className="text-sm font-medium text-foreground">{title}</h2>
       {children}
     </div>
   );
@@ -570,11 +570,11 @@ export default function CampaignBuilder({ mode, campaignId }: CampaignBuilderPro
         <div className="flex min-w-0 items-center gap-3">
           {mode === "edit" ? (
             <>
-              <span className="truncate text-sm font-semibold text-foreground">
+              <span className="truncate text-sm font-medium text-foreground">
                 {name || "Untitled campaign"}
               </span>
               <span
-                className={`rounded px-2 py-0.5 text-xs font-semibold ${
+                className={`rounded px-2 py-0.5 text-xs font-medium ${
                   isActive ? "bg-success/15 text-success" : "bg-muted/15 text-muted"
                 }`}
               >
@@ -637,7 +637,7 @@ export default function CampaignBuilder({ mode, campaignId }: CampaignBuilderPro
         )}
 
         <div className="space-y-3">
-          <label className="text-sm font-semibold text-foreground">
+          <label className="text-sm font-medium text-foreground">
             Campaign name{" "}
             <span className="font-normal text-muted">(optional)</span>
           </label>

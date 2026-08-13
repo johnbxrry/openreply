@@ -260,7 +260,7 @@ export default function InboxPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-end justify-between gap-4">
-        <h1 className="text-lg font-semibold text-foreground">Inbox</h1>
+        <h1 className="text-lg font-medium text-foreground">Inbox</h1>
         {accounts.length > 1 && (
           <AccountSelect
             accounts={accounts}
@@ -279,7 +279,7 @@ export default function InboxPage() {
             active ? "hidden" : "flex"
           }`}
         >
-          <div className="shrink-0 border-b border-border px-4 py-3 text-sm font-semibold text-foreground">
+          <div className="shrink-0 border-b border-border px-4 py-3 text-sm font-medium text-foreground">
             Conversations
           </div>
           <div className="min-h-0 flex-1 overflow-y-auto">
@@ -337,7 +337,7 @@ export default function InboxPage() {
             </div>
           ) : (
             <>
-              <div className="flex shrink-0 items-center gap-2 border-b border-border px-4 py-3 text-sm font-semibold text-foreground">
+              <div className="flex shrink-0 items-center gap-2 border-b border-border px-4 py-3 text-sm font-medium text-foreground">
                 <button
                   type="button"
                   onClick={() => setActiveId(null)}

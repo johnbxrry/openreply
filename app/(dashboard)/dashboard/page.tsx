@@ -91,7 +91,7 @@ export default function DashboardPage() {
       {/* Greeting header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground sm:text-3xl">
+          <h1 className="text-2xl font-medium text-foreground sm:text-3xl">
             Hello, {stats?.userName ?? "there"}!
           </h1>
           <p className="mt-1 text-sm text-muted">
@@ -132,7 +132,7 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-6 gap-4 sm:gap-6">
         {/* 7-Day Chart */}
         <div className="lg:col-span-3 panel rounded p-4 sm:p-6">
-          <h2 className="text-sm font-semibold text-foreground mb-6">DMs — Last 7 Days</h2>
+          <h2 className="text-sm font-medium text-foreground mb-6">DMs — Last 7 Days</h2>
           <div className="flex items-end gap-1.5 h-40 sm:gap-2">
             {stats?.dailyDMs.map((day) => (
               <div key={day.date} className="min-w-0 flex-1 flex flex-col items-center gap-2">
@@ -152,7 +152,7 @@ export default function DashboardPage() {
 
         {/* Top Keywords */}
         <div className="lg:col-span-1 panel rounded p-4 sm:p-6">
-          <h2 className="text-sm font-semibold text-foreground mb-4">Top Keywords</h2>
+          <h2 className="text-sm font-medium text-foreground mb-4">Top Keywords</h2>
           <div className="space-y-3">
             {stats?.topKeywords.length === 0 && (
               <p className="text-sm text-muted py-8">No keyword matches yet</p>
@@ -170,7 +170,7 @@ export default function DashboardPage() {
 
         {/* Recent Activity */}
         <div className="lg:col-span-2 panel rounded p-4 sm:p-6">
-          <h2 className="text-sm font-semibold text-foreground mb-4">Recent Activity</h2>
+          <h2 className="text-sm font-medium text-foreground mb-4">Recent Activity</h2>
           <div className="space-y-3 max-h-60 overflow-y-auto">
             {stats?.recentLogs.length === 0 && (
               <p className="text-sm text-muted text-center py-8">No activity yet</p>

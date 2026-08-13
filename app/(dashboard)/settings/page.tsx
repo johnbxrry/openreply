@@ -138,7 +138,7 @@ export default function SettingsPage() {
       </Suspense>
 
       <section className="panel rounded p-4 sm:p-6">
-        <h2 className="text-base font-semibold mb-6">Instagram Connection</h2>
+        <h2 className="text-base font-medium mb-6">Instagram Connection</h2>
 
         <div className="space-y-4">
           <div className="flex items-center justify-between gap-3 py-3 border-b border-border">
@@ -184,7 +184,7 @@ export default function SettingsPage() {
                 className="flex flex-col gap-3 rounded border border-border bg-surface/70 p-4 sm:flex-row sm:items-center sm:justify-between"
               >
                 <div>
-                  <p className="text-sm font-semibold text-foreground">
+                  <p className="text-sm font-medium text-foreground">
                     @{account.username}
                   </p>
                   <p className="mt-1 text-xs text-muted">
@@ -220,7 +220,7 @@ export default function SettingsPage() {
       </section>
 
       <section className="panel rounded p-4 sm:p-6">
-        <h2 className="text-base font-semibold mb-6">Team</h2>
+        <h2 className="text-base font-medium mb-6">Team</h2>
         <div className="space-y-3">
           {membersData?.members.map((member) => (
             <div
@@ -233,7 +233,7 @@ export default function SettingsPage() {
                 </p>
                 <p className="text-xs text-muted">{member.user.email}</p>
               </div>
-              <span className="rounded-full border border-border px-3 py-1 text-xs font-semibold text-muted">
+              <span className="rounded-full border border-border px-3 py-1 text-xs font-medium text-muted">
                 {member.role}
               </span>
             </div>
@@ -242,7 +242,7 @@ export default function SettingsPage() {
 
         {membersData?.invitations.length ? (
           <div className="mt-6 border-t border-border pt-4">
-            <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted">
+            <p className="mb-3 text-xs font-medium uppercase tracking-wide text-muted">
               Pending invites
             </p>
             <div className="space-y-3">
@@ -322,7 +322,7 @@ export default function SettingsPage() {
       </section>
 
       <section className="panel rounded p-4 sm:p-6">
-        <h2 className="text-base font-semibold mb-6">Usage</h2>
+        <h2 className="text-base font-medium mb-6">Usage</h2>
         <div className="flex items-center justify-between gap-3 py-3">
           <div>
             <p className="text-sm font-medium text-foreground">
@@ -332,7 +332,7 @@ export default function SettingsPage() {
               Self-hosted — no plan limits.
             </p>
           </div>
-          <span className="text-sm font-semibold text-foreground">
+          <span className="text-sm font-medium text-foreground">
             {data?.workspace.dmsSentThisPeriod ?? 0}
           </span>
         </div>

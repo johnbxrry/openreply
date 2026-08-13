@@ -107,7 +107,7 @@ export default function OverviewPage() {
     <div className="space-y-8">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div className="min-w-0">
-          <h1 className="text-lg font-semibold text-foreground">Overview</h1>
+          <h1 className="text-lg font-medium text-foreground">Overview</h1>
           <p className="text-sm text-muted mt-1">
             {data.requestedCount === "all" ? "All-time" : "Recent"} —{" "}
             {totals.posts} post{totals.posts === 1 ? "" : "s"} from @
@@ -124,7 +124,7 @@ export default function OverviewPage() {
         </div>
         <div className="flex flex-wrap items-end gap-x-4 gap-y-3">
           <label className="flex flex-col gap-2 text-sm">
-            <span className="text-xs font-semibold uppercase tracking-wide text-muted">
+            <span className="text-xs font-medium uppercase tracking-wide text-muted">
               Range
             </span>
             <select
@@ -186,7 +186,7 @@ export default function OverviewPage() {
 
       {/* Per-post table */}
       <div className="panel rounded p-4 sm:p-6">
-        <h2 className="text-sm font-semibold text-foreground mb-4">Posts</h2>
+        <h2 className="text-sm font-medium text-foreground mb-4">Posts</h2>
         {posts.length === 0 ? (
           <p className="text-sm text-muted py-8 text-center">No posts found</p>
         ) : (
