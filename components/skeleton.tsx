@@ -14,3 +14,21 @@ export function StatTileSkeleton() {
     </div>
   );
 }
+
+/* A loading placeholder shaped like a real panel: same chrome and padding
+   as the loaded state, with a title bar and a body block shimmering inside.
+   `body` sizes the inner block; `className` places the panel in a grid. */
+export function PanelSkeleton({
+  className = "",
+  body = "h-40",
+}: {
+  className?: string;
+  body?: string;
+}) {
+  return (
+    <div className={`panel rounded p-4 sm:p-6 ${className}`}>
+      <Skeleton className="h-4 w-32 max-w-full" />
+      <Skeleton className={`mt-4 ${body}`} />
+    </div>
+  );
+}

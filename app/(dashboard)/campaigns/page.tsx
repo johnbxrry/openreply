@@ -10,7 +10,7 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import AccountSelect, { type AccountOption } from "@/components/account-select";
-import { Skeleton } from "@/components/skeleton";
+import { PanelSkeleton } from "@/components/skeleton";
 import { readCache, writeCache } from "@/lib/client-cache";
 
 interface Campaign {
@@ -282,7 +282,7 @@ export default function CampaignsPage() {
     return (
       <div className="space-y-4">
         {[...Array(3)].map((_, i) => (
-          <Skeleton key={i} className="h-36" />
+          <PanelSkeleton key={i} body="h-14" />
         ))}
       </div>
     );

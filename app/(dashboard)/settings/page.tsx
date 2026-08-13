@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useState } from "react";
 import type { AccountOption } from "@/components/account-select";
 import { InstagramConnectNotice } from "@/components/instagram-connect-notice";
-import { Skeleton } from "@/components/skeleton";
+import { PanelSkeleton } from "@/components/skeleton";
 
 interface SettingsData {
   workspace: {
@@ -123,8 +123,8 @@ export default function SettingsPage() {
     // Mirrors the loaded layout: connection panel, then the team panel.
     return (
       <div className="max-w-2xl mx-auto space-y-8">
-        <Skeleton className="h-80 rounded" />
-        <Skeleton className="h-56 rounded" />
+        <PanelSkeleton body="h-56" />
+        <PanelSkeleton body="h-32" />
       </div>
     );
   }

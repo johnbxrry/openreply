@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Skeleton } from "@/components/skeleton";
+import { PanelSkeleton, Skeleton } from "@/components/skeleton";
 import StatusBadge from "@/components/status-badge";
 
 interface DiagnosticsData {
@@ -128,7 +128,7 @@ export default function DiagnosticsPage() {
             </div>
           ))}
         </div>
-        <Skeleton className="h-64" />
+        <PanelSkeleton body="h-44" />
       </div>
     );
   }

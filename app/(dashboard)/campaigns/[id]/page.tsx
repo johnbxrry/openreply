@@ -10,7 +10,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { Skeleton } from "@/components/skeleton";
+import { PanelSkeleton } from "@/components/skeleton";
 import Link from "next/link";
 import CampaignPreview, { type PreviewTab } from "@/components/campaign-preview";
 
@@ -130,8 +130,8 @@ export default function CampaignDetailPage() {
     // Mirrors the loaded two-pane layout: summary left, insights right.
     return (
       <div className="grid gap-6 lg:grid-cols-[minmax(0,340px)_1fr]">
-        <Skeleton className="h-80" />
-        <Skeleton className="h-96" />
+        <PanelSkeleton body="h-60" />
+        <PanelSkeleton body="h-72" />
       </div>
     );
   }

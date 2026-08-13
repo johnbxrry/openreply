@@ -17,7 +17,7 @@ import { useRouter } from "next/navigation";
 import AccountSelect, { type AccountOption } from "@/components/account-select";
 import PostPicker from "@/components/post-picker";
 import CampaignPreview, { type PreviewTab } from "@/components/campaign-preview";
-import { Skeleton } from "@/components/skeleton";
+import { PanelSkeleton } from "@/components/skeleton";
 import { readCache, writeCache } from "@/lib/client-cache";
 import {
   IMPORT_QUEUE_KEY,
@@ -538,11 +538,11 @@ export default function CampaignBuilder({ mode, campaignId }: CampaignBuilderPro
     return (
       <div className="grid gap-6 lg:grid-cols-[300px_1fr] lg:gap-8">
         <div className="space-y-6">
-          <Skeleton className="h-40" />
-          <Skeleton className="h-40" />
-          <Skeleton className="h-40" />
+          <PanelSkeleton body="h-24" />
+          <PanelSkeleton body="h-24" />
+          <PanelSkeleton body="h-24" />
         </div>
-        <Skeleton className="h-[480px]" />
+        <PanelSkeleton body="h-96" />
       </div>
     );
   }

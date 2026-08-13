@@ -9,7 +9,7 @@
 import { useEffect, useState } from "react";
 import AccountSelect, { type AccountOption } from "@/components/account-select";
 import DmChart from "@/components/dm-chart";
-import { Skeleton } from "@/components/skeleton";
+import { PanelSkeleton, Skeleton } from "@/components/skeleton";
 import StatCard from "@/components/stat-card";
 import StatusBadge from "@/components/status-badge";
 
@@ -105,9 +105,9 @@ export default function DashboardPage() {
           ))}
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-6 gap-4 sm:gap-6">
-          <Skeleton className="lg:col-span-3 h-64" />
-          <Skeleton className="lg:col-span-1 h-64" />
-          <Skeleton className="lg:col-span-2 h-64" />
+          <PanelSkeleton className="lg:col-span-3" body="h-44" />
+          <PanelSkeleton className="lg:col-span-1" body="h-44" />
+          <PanelSkeleton className="lg:col-span-2" body="h-44" />
         </div>
       </div>
     );

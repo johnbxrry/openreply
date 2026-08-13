@@ -10,7 +10,7 @@
 
 import { useEffect, useState } from "react";
 import AccountSelect from "@/components/account-select";
-import { Skeleton, StatTileSkeleton } from "@/components/skeleton";
+import { PanelSkeleton, Skeleton, StatTileSkeleton } from "@/components/skeleton";
 import StatCard from "@/components/stat-card";
 import FollowerChart from "@/components/follower-chart";
 import type { OverviewResponse } from "@/app/api/instagram/overview/route";
@@ -85,8 +85,8 @@ export default function OverviewPage() {
             <StatTileSkeleton key={i} />
           ))}
         </div>
-        <Skeleton className="h-96" />
-        <Skeleton className="h-64" />
+        <PanelSkeleton body="h-72" />
+        <PanelSkeleton body="h-44" />
       </div>
     );
   }
