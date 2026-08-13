@@ -156,9 +156,9 @@ export default function Home() {
 
           <Link
             href="/login"
-            className="text-sm text-foreground transition hover:text-muted"
+            className="text-lg font-normal text-foreground/80 transition hover:text-foreground"
           >
-            Access Your Portal <span aria-hidden="true">&rarr;</span>
+            access your portal <span aria-hidden="true">&rarr;</span>
           </Link>
         </div>
       </header>
@@ -177,14 +177,14 @@ export default function Home() {
         </p>
 
         <div className="mt-10 flex items-center gap-6">
-          <Link href="/login" className="btn-primary px-5 py-3 text-sm">
-            Access Your Portal
+          <Link href="/login" className="btn-primary px-3.5 py-2 text-base">
+            access your portal
           </Link>
           <a
             href="#preview"
-            className="text-sm text-muted transition hover:text-foreground"
+            className="text-lg font-normal text-foreground/80 transition hover:text-foreground"
           >
-            Learn More <span aria-hidden="true">&rarr;</span>
+            learn more <span aria-hidden="true">&rarr;</span>
           </a>
         </div>
       </section>
@@ -202,8 +202,27 @@ export default function Home() {
       </section>
 
       <footer className="border-t border-border py-8">
-        <div className="mx-auto flex w-full max-w-6xl items-center px-5 text-sm text-muted sm:px-6 lg:px-8">
-          <span className="font-medium">OpenReply</span>
+        <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-5 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/openreply-mark.svg"
+            alt="OpenReply"
+            className="h-8 w-auto opacity-90"
+          />
+          <nav className="flex items-center gap-[25px] text-sm text-muted">
+            <Link href="/privacy" className="transition hover:text-foreground">
+              privacy policy
+            </Link>
+            <Link href="/terms" className="transition hover:text-foreground">
+              terms of service
+            </Link>
+            <Link
+              href="/data-deletion"
+              className="transition hover:text-foreground"
+            >
+              data deletion
+            </Link>
+          </nav>
         </div>
       </footer>
     </main>

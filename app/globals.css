@@ -18,7 +18,11 @@
   --muted: #909090;
   --accent: #4c88f7;
   --accent-hover: #2e66e8;
-  --accent-active: #2558cf; /* pressed state; consumed by .btn-primary only */
+  --accent-active: #2558cf;
+  --button: #efefe4; /* Paper --color-button: primary actions are off-white */
+  --button-hover: #e0e0d2;
+  --button-active: #d2d2c2;
+  --button-text: #181818; /* Paper --color-button-text */
   --success: #22c55e;
   --error: #ef4444;
   --warning: #f59e0b;
@@ -90,39 +94,28 @@ select:focus-visible {
   /* Frosted primary action. Sizing (padding, text size, width) stays at the
      call site; this owns color, radius, gradient, and shadows. Everything
      derives from var(--accent) so a token change recolors the whole set. */
+  /* Primary action, straight from the Paper file: off-white fill, dark
+     text, 16px medium, 8px/14px padding, 4px radius (--radius-sm). */
   .btn-primary {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
-    border-radius: 0.375rem; /* --radius-md in the Paper file */
+    gap: 0.3125rem;
+    border-radius: 0.25rem;
     font-weight: 500;
-    color: #ffffff;
-    background-color: var(--accent);
-    background-image: linear-gradient(
-      to bottom,
-      color-mix(in srgb, var(--accent), white 10%),
-      var(--accent)
-    );
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.3),
-      0 1px 2px rgba(0, 0, 0, 0.4);
+    color: var(--button-text);
+    background-color: var(--button);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
     transition:
       background-color 150ms,
       box-shadow 150ms;
   }
   .btn-primary:hover {
-    background-color: var(--accent-hover);
-    background-image: linear-gradient(
-      to bottom,
-      color-mix(in srgb, var(--accent-hover), white 8%),
-      var(--accent-hover)
-    );
+    background-color: var(--button-hover);
   }
   .btn-primary:active {
-    background-color: var(--accent-active);
-    background-image: none;
-    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
+    background-color: var(--button-active);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.15);
   }
   .btn-primary:disabled,
   .btn-primary[aria-disabled="true"] {
@@ -138,7 +131,7 @@ select:focus-visible {
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    border-radius: 0.375rem;
+    border-radius: 0.25rem;
     border: 1px solid var(--border);
     background: var(--surface);
     font-weight: 500;
