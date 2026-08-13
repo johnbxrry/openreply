@@ -120,7 +120,13 @@ export default function SettingsPage() {
   }
 
   if (loading) {
-    return <Skeleton className="h-64" />;
+    // Mirrors the loaded layout: connection panel, then the team panel.
+    return (
+      <div className="max-w-2xl mx-auto space-y-8">
+        <Skeleton className="h-80 rounded" />
+        <Skeleton className="h-56 rounded" />
+      </div>
+    );
   }
 
   const accounts = data?.instagramAccounts ?? [];

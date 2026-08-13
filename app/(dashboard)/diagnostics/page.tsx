@@ -112,7 +112,25 @@ export default function DiagnosticsPage() {
   }, []);
 
   if (loading && !data) {
-    return <Skeleton className="h-64" />;
+    // Mirrors the loaded layout: header, health tiles, then detail panels.
+    return (
+      <div className="mx-auto max-w-5xl space-y-6">
+        <div>
+          <Skeleton className="h-8 w-72 max-w-full" />
+          <Skeleton className="mt-2 h-4 w-96 max-w-full" />
+        </div>
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3">
+          {[...Array(3)].map((_, i) => (
+            <div key={i} className="panel rounded p-4 sm:p-5">
+              <Skeleton className="h-3 w-24" />
+              <Skeleton className="mt-3 h-7 w-28" />
+              <Skeleton className="mt-2 h-3 w-32" />
+            </div>
+          ))}
+        </div>
+        <Skeleton className="h-64" />
+      </div>
+    );
   }
 
   const workerAgeSeconds =

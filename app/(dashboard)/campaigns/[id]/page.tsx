@@ -127,7 +127,13 @@ export default function CampaignDetailPage() {
   }
 
   if (loading) {
-    return <Skeleton className="h-64" />;
+    // Mirrors the loaded two-pane layout: summary left, insights right.
+    return (
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,340px)_1fr]">
+        <Skeleton className="h-80" />
+        <Skeleton className="h-96" />
+      </div>
+    );
   }
   if (notFound || !campaign) {
     return (

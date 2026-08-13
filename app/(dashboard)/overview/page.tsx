@@ -10,7 +10,7 @@
 
 import { useEffect, useState } from "react";
 import AccountSelect from "@/components/account-select";
-import { StatTileSkeleton } from "@/components/skeleton";
+import { Skeleton, StatTileSkeleton } from "@/components/skeleton";
 import StatCard from "@/components/stat-card";
 import FollowerChart from "@/components/follower-chart";
 import type { OverviewResponse } from "@/app/api/instagram/overview/route";
@@ -73,11 +73,20 @@ export default function OverviewPage() {
   }
 
   if (loading) {
+    // Mirrors the loaded layout: header, stat grid, followers chart, posts.
     return (
-      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4">
-        {[...Array(6)].map((_, i) => (
-          <StatTileSkeleton key={i} />
-        ))}
+      <div className="space-y-8">
+        <div>
+          <Skeleton className="h-6 w-32" />
+          <Skeleton className="mt-2 h-4 w-64 max-w-full" />
+        </div>
+        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4">
+          {[...Array(6)].map((_, i) => (
+            <StatTileSkeleton key={i} />
+          ))}
+        </div>
+        <Skeleton className="h-96" />
+        <Skeleton className="h-64" />
       </div>
     );
   }

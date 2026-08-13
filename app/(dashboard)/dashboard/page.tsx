@@ -67,8 +67,13 @@ export default function DashboardPage() {
   }
 
   if (loading) {
+    // Mirrors the loaded layout: greeting, stat grid, chart/keywords/activity.
     return (
-      <div className="space-y-6">
+      <div className="space-y-8">
+        <div>
+          <Skeleton className="h-8 w-56" />
+          <Skeleton className="mt-2 h-4 w-72 max-w-full" />
+        </div>
         <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4">
           {[...Array(6)].map((_, i) => (
             <div key={i} className="panel rounded p-5 h-32">
@@ -77,6 +82,11 @@ export default function DashboardPage() {
               <Skeleton className="mt-2 h-4 w-24" />
             </div>
           ))}
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-6 gap-4 sm:gap-6">
+          <Skeleton className="lg:col-span-3 h-64" />
+          <Skeleton className="lg:col-span-1 h-64" />
+          <Skeleton className="lg:col-span-2 h-64" />
         </div>
       </div>
     );

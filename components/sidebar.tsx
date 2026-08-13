@@ -51,8 +51,13 @@ export default function Sidebar({
         `}
       >
         <div className="px-6 py-5 border-b border-border">
-          <Link href="/dashboard" className="text-base font-medium">
-            OpenReply
+          <Link href="/dashboard" aria-label="OpenReply dashboard">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/openreply-mark.svg"
+              alt="OpenReply"
+              className="h-8 w-auto opacity-90"
+            />
           </Link>
         </div>
 

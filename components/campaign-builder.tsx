@@ -534,7 +534,17 @@ export default function CampaignBuilder({ mode, campaignId }: CampaignBuilderPro
   }
 
   if (loading) {
-    return <Skeleton className="h-64" />;
+    // Mirrors the loaded two-pane layout: controls left, phone preview right.
+    return (
+      <div className="grid gap-6 lg:grid-cols-[300px_1fr] lg:gap-8">
+        <div className="space-y-6">
+          <Skeleton className="h-40" />
+          <Skeleton className="h-40" />
+          <Skeleton className="h-40" />
+        </div>
+        <Skeleton className="h-[480px]" />
+      </div>
+    );
   }
 
   if (notFound) {
