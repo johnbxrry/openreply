@@ -5,12 +5,14 @@ export function Skeleton({ className = "" }: { className?: string }) {
   return <div aria-hidden="true" className={`skeleton ${className}`} />;
 }
 
-/* Matches StatCard exactly: label line + value line in a p-4 panel. */
-export function StatTileSkeleton() {
+/* Matches StatCard exactly: label line + value line in a p-4 panel.
+   Pass lines={3} for tiles that also render a trend row. */
+export function StatTileSkeleton({ lines = 2 }: { lines?: 2 | 3 }) {
   return (
     <div className="panel rounded p-4">
       <Skeleton className="h-4 w-16" />
       <Skeleton className="mt-2 h-7 w-20" />
+      {lines === 3 && <Skeleton className="mt-2 h-3 w-24" />}
     </div>
   );
 }

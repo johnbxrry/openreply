@@ -226,7 +226,22 @@ export async function GET(request: NextRequest) {
         { id: account.id, instagramId: account.instagramId },
         accessToken
       );
-      followerHistory = await getFollowerHistory(account.id);
+      // Align the follower window to the selected post range (posts are
+      // newest-first) — at least 14 days so the week-over-week chart always
+      // has both weeks, capped at a year.
+      const oldestTimestamp = posts.at(-1)?.timestamp;
+      const historyDays = oldestTimestamp
+        ? Math.min(
+            365,
+            Math.max(
+              14,
+              Math.ceil(
+                (Date.now() - Date.parse(oldestTimestamp)) / 86_400_000
+              ) + 1
+            )
+          )
+        : 90;
+      followerHistory = await getFollowerHistory(account.id, historyDays);
     } catch (err) {
       console.warn(
         "[Instagram Overview] Follower history unavailable:",

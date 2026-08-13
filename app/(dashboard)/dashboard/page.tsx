@@ -1,134 +1,204 @@
 "use client";
 
 /**
- * Dashboard Home Page
+ * Instagram Analytics (Dashboard)
  *
- * Overview cards, 7-day chart, and recent activity feed.
+ * Aggregate reach/engagement across your recent posts with trend states and
+ * sparklines, a week-over-week followers chart, per-post averages, and the
+ * per-post table. Views / reach / saved / shares come from Instagram media
+ * insights (requires the insights permission); likes and comments are always
+ * available.
  */
 
-import { useEffect, useState } from "react";
-import AccountSelect, { type AccountOption } from "@/components/account-select";
-import DmChart from "@/components/dm-chart";
+import { useEffect, useMemo, useState } from "react";
+import AccountSelect from "@/components/account-select";
+import FollowersCard from "@/components/followers-card";
 import { PanelSkeleton, Skeleton, StatTileSkeleton } from "@/components/skeleton";
 import StatCard from "@/components/stat-card";
-import StatusBadge from "@/components/status-badge";
+import {
+  averageMetricPerPost,
+  computeTrend,
+  engagementTrend,
+  followerGainInWindow,
+  sparklineSeries,
+  weekOverWeekGain,
+  NEUTRAL_TREND,
+  type MetricKey,
+} from "@/lib/analytics-trends";
+import type { OverviewResponse } from "@/app/api/instagram/overview/route";
 
-type ChartRange = "week" | "month" | "year";
-
-const RANGE_OPTIONS: { value: ChartRange; label: string; title: string }[] = [
-  { value: "week", label: "This week", title: "DMs (This Week)" },
-  { value: "month", label: "This month", title: "DMs (This Month)" },
-  { value: "year", label: "This year", title: "DMs (This Year)" },
-];
-
-interface DashboardStats {
-  userName: string | null;
-  contactsCount: number;
-  totalAutomations: number;
-  activeAutomations: number;
-  dmsSentToday: number;
-  dmsSentWeek: number;
-  dmsSentMonth: number;
-  dmsSkippedMonth: number;
-  dmsFailedMonth: number;
-  totalDMs: number;
-  clicksThisMonth: number;
-  totalClicks: number;
-  ctrThisMonth: number;
-  instagramAccounts: AccountOption[];
-  selectedInstagramAccountId: string | null;
-  topKeywords: { keyword: string; count: number }[];
-  dailyDMs: { date: string; count: number }[];
-  recentLogs: Array<{
-    id: string;
-    commenterName: string | null;
-    commentText: string;
-    status: string;
-    createdAt: string;
-    automation: { name: string };
-    instagramAccount?: { username: string };
-  }>;
+function formatNumber(n: number | null): string {
+  if (n === null) return "—";
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
+  if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`;
+  return n.toLocaleString();
 }
 
-export default function DashboardPage() {
-  const [stats, setStats] = useState<DashboardStats | null>(null);
+function formatDate(iso: string): string {
+  const d = new Date(iso);
+  return d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+}
+
+const COUNT_OPTIONS = [
+  { value: "25", label: "Last 25" },
+  { value: "50", label: "Last 50" },
+  { value: "100", label: "Last 100" },
+  { value: "all", label: "All time" },
+];
+
+const TILE_METRICS: { key: MetricKey; label: string }[] = [
+  { key: "views", label: "Views" },
+  { key: "reach", label: "Reach" },
+  { key: "likes", label: "Likes" },
+  { key: "comments", label: "Comments" },
+  { key: "saved", label: "Saved" },
+  { key: "shares", label: "Shares" },
+];
+
+export default function InstagramAnalyticsPage() {
+  const [data, setData] = useState<OverviewResponse | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [selectedAccountId, setSelectedAccountId] = useState("all");
-  const [range, setRange] = useState<ChartRange>("week");
+  const [count, setCount] = useState("50");
 
   useEffect(() => {
     const params = new URLSearchParams();
     if (selectedAccountId !== "all") {
       params.set("instagramAccountId", selectedAccountId);
     }
-    if (range !== "week") {
-      params.set("range", range);
-    }
+    params.set("count", count);
 
-    fetch(`/api/dashboard/stats${params.size ? `?${params}` : ""}`)
+    fetch(`/api/instagram/overview?${params}`)
       .then((r) => r.json())
-      .then((data) => {
-        if (data.success) setStats(data.data);
+      .then((res) => {
+        if (res.success) {
+          setData(res.data);
+          setError(null);
+        } else {
+          setError(res.error ?? "Failed to load analytics");
+        }
       })
-      .catch(console.error)
+      .catch(() => setError("Failed to load analytics"))
       .finally(() => setLoading(false));
-  }, [selectedAccountId, range]);
+  }, [selectedAccountId, count]);
+
+  const analytics = useMemo(() => {
+    if (!data) return null;
+    const { posts, followerHistory, totals } = data;
+
+    const tiles = TILE_METRICS.map(({ key, label }) => ({
+      key,
+      label,
+      trend: computeTrend(posts, key),
+      spark: sparklineSeries(posts, key),
+    }));
+
+    // Posts arrive newest-first; the follower window spans back to the
+    // oldest selected post (bounded by how far snapshots actually reach).
+    const oldestDay = posts.at(-1)?.timestamp.slice(0, 10) ?? null;
+    const gain = oldestDay
+      ? followerGainInWindow(followerHistory, oldestDay)
+      : null;
+    const wow = weekOverWeekGain(followerHistory);
+
+    return {
+      tiles,
+      avgViews: averageMetricPerPost(posts, "views"),
+      avgSaves: averageMetricPerPost(posts, "saved"),
+      avgFollowerGain:
+        gain !== null && posts.length > 0 ? gain / posts.length : null,
+      conversion:
+        gain !== null && totals.views > 0 ? (gain / totals.views) * 100 : null,
+      engagement:
+        totals.reach > 0 ? (totals.interactions / totals.reach) * 100 : null,
+      followerTrend: wow.trend,
+      engTrend: engagementTrend(posts),
+    };
+  }, [data]);
 
   function handleAccountChange(accountId: string) {
     setLoading(true);
     setSelectedAccountId(accountId);
   }
 
-  function handleRangeChange(next: ChartRange) {
+  function handleCountChange(next: string) {
     setLoading(true);
-    setRange(next);
+    setCount(next);
   }
 
-  const rangeOption =
-    RANGE_OPTIONS.find((o) => o.value === range) ?? RANGE_OPTIONS[0];
-
   if (loading) {
-    // Mirrors the loaded layout: greeting, stat grid, chart/keywords/activity.
+    // Mirrors the loaded layout: header, stat grid, followers card,
+    // post-analytics cards, posts table.
     return (
       <div className="space-y-8">
         <div>
-          <Skeleton className="h-8 w-56" />
+          <Skeleton className="h-8 w-64 max-w-full" />
           <Skeleton className="mt-2 h-4 w-72 max-w-full" />
+          <Skeleton className="mt-2 h-4 w-48 max-w-full" />
         </div>
         <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4">
           {[...Array(6)].map((_, i) => (
-            <StatTileSkeleton key={i} />
+            <StatTileSkeleton key={i} lines={3} />
           ))}
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-6 gap-4 sm:gap-6">
-          <PanelSkeleton className="lg:col-span-3" body="h-44" />
-          <PanelSkeleton className="lg:col-span-1" body="h-44" />
-          <PanelSkeleton className="lg:col-span-2" body="h-44" />
+        <PanelSkeleton body="h-64" />
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+          {[...Array(5)].map((_, i) => (
+            <StatTileSkeleton key={i} lines={3} />
+          ))}
         </div>
+        <PanelSkeleton body="h-44" />
       </div>
     );
   }
 
-  const connectedCount = stats?.instagramAccounts.length ?? 0;
+  if (error) {
+    return (
+      <div className="panel rounded p-8 text-center">
+        <p className="text-sm text-error">{error}</p>
+        {error.includes("connect") && (
+          <a
+            href="/api/instagram/connect"
+            className="mt-4 inline-block text-sm text-accent hover:underline"
+          >
+            Connect Instagram
+          </a>
+        )}
+      </div>
+    );
+  }
+
+  if (!data || !analytics) return null;
+
+  const { totals, posts, accounts, insightsAvailable, followers, followerHistory } =
+    data;
 
   return (
     <div className="space-y-8">
-      {/* Greeting header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-medium text-foreground sm:text-3xl">
-            Hello, {stats?.userName ?? "there"}!
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div className="min-w-0">
+          <h1 className="text-2xl font-normal tracking-[-0.02em] text-foreground sm:text-3xl">
+            instagram analytics
           </h1>
+          <p className="text-sm text-muted mt-2">
+            {data.requestedCount === "all" ? "All-time" : "Recent"} —{" "}
+            {totals.posts} post{totals.posts === 1 ? "" : "s"}
+            {data.truncated ? ` (capped at ${totals.posts})` : ""} · Broad
+            overview of social metrics
+          </p>
           <p className="mt-1 text-sm text-muted">
-            {connectedCount} connected{" "}
-            {connectedCount === 1 ? "account" : "accounts"}
-            {" · "}
-            {stats?.contactsCount ?? 0}{" "}
-            {stats?.contactsCount === 1 ? "contact" : "contacts"}
-            {" · "}
-            <a href="/logs" className="text-accent hover:underline">
-              See activity
+            <a
+              href={`https://instagram.com/${data.account.username}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-foreground transition hover:text-accent"
+            >
+              @{data.account.username}
             </a>
+            {followers !== null && (
+              <> · {followers.toLocaleString()} followers</>
+            )}
           </p>
         </div>
         <div className="flex flex-wrap items-end gap-x-4 gap-y-3">
@@ -137,20 +207,24 @@ export default function DashboardPage() {
               Range
             </span>
             <select
-              value={range}
-              onChange={(e) => handleRangeChange(e.target.value as ChartRange)}
+              value={count}
+              onChange={(e) => handleCountChange(e.target.value)}
               className="border-0 bg-transparent py-2 pr-1 text-sm text-foreground outline-none"
             >
-              {RANGE_OPTIONS.map((o) => (
+              {COUNT_OPTIONS.map((o) => (
                 <option key={o.value} value={o.value}>
                   {o.label}
                 </option>
               ))}
             </select>
           </label>
-          {stats && stats.instagramAccounts.length > 1 && (
+          {accounts.length > 1 && (
             <AccountSelect
-              accounts={stats.instagramAccounts}
+              accounts={accounts.map((a) => ({
+                id: a.id,
+                username: a.username,
+                instagramId: a.id,
+              }))}
               value={selectedAccountId}
               onChange={handleAccountChange}
             />
@@ -158,75 +232,164 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Stat Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4">
-        <StatCard
-          label="Active Campaigns"
-          value={stats?.activeAutomations ?? 0}
-        />
-        <StatCard label="DMs Sent" value={stats?.dmsSentMonth ?? 0} />
-        <StatCard label="Skipped" value={stats?.dmsSkippedMonth ?? 0} />
-        <StatCard label="Failed" value={stats?.dmsFailedMonth ?? 0} />
-        <StatCard label="Clicks" value={stats?.clicksThisMonth ?? 0} />
-        <StatCard label="CTR" value={`${stats?.ctrThisMonth ?? 0}%`} />
+      {!insightsAvailable && (
+        <div className="panel rounded p-4 border border-border">
+          <p className="text-sm text-foreground">
+            Views, reach, saved and shares need the insights permission.
+          </p>
+          <p className="text-sm text-muted mt-1">
+            Reconnect your account to grant it — likes and comments are shown in
+            the meantime.
+          </p>
+          <a
+            href="/api/instagram/connect"
+            className="mt-3 inline-block text-sm text-accent hover:underline"
+          >
+            Reconnect Instagram
+          </a>
+        </div>
+      )}
+
+      {/* Aggregate totals with trend + sparkline */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+        {analytics.tiles.map((tile) => (
+          <StatCard
+            key={tile.key}
+            label={tile.label}
+            value={formatNumber(totals[tile.key])}
+            trend={tile.trend}
+            spark={tile.spark}
+          />
+        ))}
       </div>
 
-      {/* Chart + Recent Activity */}
-      <div className="grid grid-cols-1 lg:grid-cols-6 gap-4 sm:gap-6">
-        {/* DM chart */}
-        <div className="lg:col-span-3 panel rounded p-4 sm:p-6">
-          <h2 className="text-sm font-medium text-foreground mb-6">
-            {rangeOption.title}
-          </h2>
-          <DmChart data={stats?.dailyDMs ?? []} monthly={range === "year"} />
-        </div>
+      {/* Follower trend — account-level, independent of the post range */}
+      <FollowersCard history={followerHistory} followers={followers} />
 
-        {/* Top Keywords */}
-        <div className="lg:col-span-1 panel rounded p-4 sm:p-6">
-          <h2 className="text-sm font-medium text-foreground mb-4">Top Keywords</h2>
-          <div className="space-y-3">
-            {stats?.topKeywords.length === 0 && (
-              <p className="text-sm text-muted py-8">No keyword matches yet</p>
+      {/* Per-post derived metrics */}
+      <div>
+        <h2 className="text-lg font-normal tracking-[-0.02em] text-foreground">
+          post analytics
+        </h2>
+        <p className="mt-1 text-sm text-muted">
+          Granular analytics of your Instagram posts.
+        </p>
+        <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+          <StatCard
+            label="Avg views / post"
+            value={formatNumber(
+              analytics.avgViews === null ? null : Math.round(analytics.avgViews)
             )}
-            {stats?.topKeywords.map((keyword) => (
-              <div key={keyword.keyword} className="flex items-center justify-between gap-3">
-                <span className="truncate text-sm font-medium text-foreground">
-                  {keyword.keyword}
-                </span>
-                <span className="text-xs text-muted">{keyword.count}</span>
-              </div>
-            ))}
-          </div>
+            trend={computeTrend(posts, "views")}
+          />
+          <StatCard
+            label="Avg follower gain / post"
+            value={
+              analytics.avgFollowerGain === null
+                ? "—"
+                : analytics.avgFollowerGain.toFixed(1)
+            }
+            trend={analytics.followerTrend}
+          />
+          <StatCard
+            label="Avg saves / post"
+            value={formatNumber(
+              analytics.avgSaves === null ? null : Math.round(analytics.avgSaves)
+            )}
+            trend={computeTrend(posts, "saved")}
+          />
+          <StatCard
+            label="Views → follower conv."
+            value={
+              analytics.conversion === null
+                ? "—"
+                : `${analytics.conversion.toFixed(2)}%`
+            }
+            trend={analytics.followerTrend}
+          />
+          <StatCard
+            label="Engagement rate"
+            value={
+              analytics.engagement === null
+                ? "—"
+                : `${analytics.engagement.toFixed(1)}%`
+            }
+            trend={analytics.engagement === null ? NEUTRAL_TREND : analytics.engTrend}
+          />
         </div>
+      </div>
 
-        {/* Recent Activity */}
-        <div className="lg:col-span-2 panel rounded p-4 sm:p-6">
-          <h2 className="text-sm font-medium text-foreground mb-4">Recent Activity</h2>
-          <div className="no-scrollbar space-y-3 max-h-60 overflow-y-auto">
-            {stats?.recentLogs.length === 0 && (
-              <p className="text-sm text-muted text-center py-8">No activity yet</p>
-            )}
-            {stats?.recentLogs.map((log) => (
-              <div
-                key={log.id}
-                className="flex items-center justify-between gap-3 py-2 border-b border-border last:border-0"
-              >
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm font-medium text-foreground truncate">
-                    @{log.commenterName ?? "unknown"}
-                  </p>
-                  <p className="text-xs text-muted truncate">
-                    {log.instagramAccount
-                      ? `@${log.instagramAccount.username} · `
-                      : ""}
-                    {log.commentText}
-                  </p>
-                </div>
-                <StatusBadge status={log.status} />
-              </div>
-            ))}
+      {/* Per-post table */}
+      <div className="panel rounded p-4 sm:p-6">
+        <h2 className="text-sm font-medium text-foreground mb-4">Posts</h2>
+        {posts.length === 0 ? (
+          <p className="text-sm text-muted py-8 text-center">No posts found</p>
+        ) : (
+          // Eight metric columns can't compress into a phone; let the table keep
+          // its natural width and scroll inside the panel instead.
+          <div className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
+            <table className="w-full min-w-[720px] text-sm">
+              <thead>
+                <tr className="text-left text-xs uppercase tracking-wide text-muted border-b border-border">
+                  <th className="py-2 pr-4 font-medium">Post</th>
+                  <th className="py-2 px-3 font-medium text-right">Views</th>
+                  <th className="py-2 px-3 font-medium text-right">Reach</th>
+                  <th className="py-2 px-3 font-medium text-right">Likes</th>
+                  <th className="py-2 px-3 font-medium text-right">Comments</th>
+                  <th className="py-2 px-3 font-medium text-right">Saved</th>
+                  <th className="py-2 px-3 font-medium text-right">Shares</th>
+                  <th className="py-2 pl-3 font-medium text-right">Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {posts.map((p) => (
+                  <tr
+                    key={p.id}
+                    className="border-b border-border last:border-0"
+                  >
+                    <td className="py-3 pr-4 max-w-xs">
+                      {p.permalink ? (
+                        <a
+                          href={p.permalink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-foreground hover:text-accent truncate block"
+                        >
+                          {p.caption || `${p.mediaType} post`}
+                        </a>
+                      ) : (
+                        <span className="text-foreground truncate block">
+                          {p.caption || `${p.mediaType} post`}
+                        </span>
+                      )}
+                    </td>
+                    <td className="py-3 px-3 text-right text-muted">
+                      {formatNumber(p.views)}
+                    </td>
+                    <td className="py-3 px-3 text-right text-muted">
+                      {formatNumber(p.reach)}
+                    </td>
+                    <td className="py-3 px-3 text-right text-muted">
+                      {formatNumber(p.likes)}
+                    </td>
+                    <td className="py-3 px-3 text-right text-muted">
+                      {formatNumber(p.comments)}
+                    </td>
+                    <td className="py-3 px-3 text-right text-muted">
+                      {formatNumber(p.saved)}
+                    </td>
+                    <td className="py-3 px-3 text-right text-muted">
+                      {formatNumber(p.shares)}
+                    </td>
+                    <td className="py-3 pl-3 text-right text-muted">
+                      {formatDate(p.timestamp)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
