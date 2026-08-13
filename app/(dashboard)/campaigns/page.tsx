@@ -400,7 +400,7 @@ export default function CampaignsPage() {
             {/* Wraps rather than compressing: on a phone the action buttons drop
                 to their own line instead of squeezing the campaign summary. */}
             <div className="flex flex-wrap items-start gap-x-4 gap-y-3">
-              {auto.postId && thumbnails[auto.postId] && (
+              {auto.postId && thumbnails[auto.postId] ? (
                 videoUrl ? (
                   <button
                     type="button"
@@ -440,13 +440,22 @@ export default function CampaignsPage() {
                     />
                   </a>
                 )
+              ) : (
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded border border-border bg-surface-hover text-[10px] font-medium uppercase text-muted">
+                  IG
+                </div>
               )}
-              <div className="min-w-[12rem] flex-1">
-                <div className="flex flex-wrap items-center gap-2 mb-2">
+              <div className="min-w-[12rem] flex-1 self-center">
+                <div className="flex flex-wrap items-center gap-x-2 gap-y-2">
                   <h3 className="text-sm font-medium truncate">{auto.name}</h3>
-                  <span className="shrink-0 rounded-full border border-border px-2 py-0.5 text-xs text-muted">
-                    @{auto.instagramAccount.username}
-                  </span>
+                  {auto.keywords.map((kw) => (
+                    <span
+                      key={kw}
+                      className="shrink-0 rounded-full bg-accent/10 px-2 py-0.5 text-xs font-medium text-accent"
+                    >
+                      {kw}
+                    </span>
+                  ))}
                   <span
                     className={`text-xs px-2 py-0.5 rounded-full font-medium ${
                       auto.isActive
@@ -461,71 +470,19 @@ export default function CampaignsPage() {
                       Waiting for next reel
                     </span>
                   )}
-                  {auto.requireFollow && (
-                    <span className="shrink-0 rounded-full bg-accent/10 px-2 py-0.5 text-xs font-medium text-accent">
-                      Follow gate
+                  <span className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted">
+                    <span className="font-medium text-foreground">
+                      {auto._count.dmLogs} runs
                     </span>
-                  )}
-                  {auto.trackedLinks.length >= 2 && (
-                    <span className="shrink-0 rounded-full bg-accent/10 px-2 py-0.5 text-xs font-medium text-accent">
-                      2 links
+                    <span className="font-medium text-foreground">
+                      {auto.analytics.ctr}% CTR
                     </span>
-                  )}
-                </div>
-
-                {/* Keywords */}
-                <div className="flex flex-wrap gap-1.5 mb-2">
-                  {auto.keywords.map((kw) => (
-                    <span
-                      key={kw}
-                      className="px-2 py-0.5 rounded-md bg-accent/10 text-accent text-xs font-medium border border-accent/10"
-                    >
-                      {kw}
-                    </span>
-                  ))}
-                </div>
-
-                {/* DM preview */}
-                <p className="text-sm text-muted truncate">&ldquo;{auto.dmMessage}&rdquo;</p>
-
-                {/* Tracked link sent */}
-                {auto.trackedLinks[0]?.trackedUrl && (
-                  <p className="mt-2 truncate font-mono text-xs text-muted">
-                    {auto.trackedLinks[0].trackedUrl}
-                  </p>
-                )}
-
-                {/* Stats */}
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-3 text-xs text-muted">
-                  <span className="font-medium text-foreground">
-                    {auto._count.dmLogs} runs
+                    <span>{auto.analytics.sent} sent</span>
+                    <span>{auto.analytics.skipped} skipped</span>
+                    <span>{auto.analytics.failed} failed</span>
+                    <span>{auto.analytics.clicks} clicks</span>
                   </span>
-                  <span>·</span>
-                  <span className="font-medium text-foreground">
-                    {auto.analytics.ctr}% CTR
-                  </span>
-                  <span>·</span>
-                  <span>{auto.analytics.sent} sent</span>
-                  <span>·</span>
-                  <span>{auto.analytics.skipped} skipped</span>
-                  <span>·</span>
-                  <span>{auto.analytics.failed} failed</span>
-                  <span>·</span>
-                  <span>{auto.analytics.clicks} clicks</span>
                 </div>
-
-                {auto.analytics.topKeywords.length > 0 && (
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {auto.analytics.topKeywords.map((keyword) => (
-                      <span
-                        key={keyword.keyword}
-                        className="rounded-md border border-border bg-surface px-2 py-1 text-xs text-muted"
-                      >
-                        {keyword.keyword}: {keyword.count}
-                      </span>
-                    ))}
-                  </div>
-                )}
               </div>
 
               {/* Actions */}

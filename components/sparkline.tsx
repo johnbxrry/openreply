@@ -63,12 +63,19 @@ export default function Sparkline({
   const color = STROKE[direction];
 
   return (
-    <div className={className} style={{ width, height }}>
+    // overflow-visible lets the hover dot render past the tiny viewBox edge
+    // instead of clipping; outline-none + no accessibility layer keep the
+    // decoration from taking focus and drawing the global focus ring.
+    <div
+      className={`outline-none [&_svg]:overflow-visible [&_.recharts-wrapper]:outline-none ${className}`}
+      style={{ width, height }}
+    >
       <AreaChart
         width={width}
         height={height}
         data={points}
-        margin={{ top: 2, right: 0, bottom: 2, left: 0 }}
+        margin={{ top: 5, right: 2, bottom: 5, left: 2 }}
+        accessibilityLayer={false}
       >
         <defs>
           <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">

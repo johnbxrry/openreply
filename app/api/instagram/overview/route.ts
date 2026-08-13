@@ -226,15 +226,15 @@ export async function GET(request: NextRequest) {
         { id: account.id, instagramId: account.instagramId },
         accessToken
       );
-      // Align the follower window to the selected post range (posts are
-      // newest-first) — at least 14 days so the week-over-week chart always
-      // has both weeks, capped at a year.
+      // Follower window: at least 90 days so the followers card's 60-day
+      // view is never starved by a short post range, extended to cover the
+      // oldest selected post (capped at a year) for range-aligned metrics.
       const oldestTimestamp = posts.at(-1)?.timestamp;
       const historyDays = oldestTimestamp
         ? Math.min(
             365,
             Math.max(
-              14,
+              90,
               Math.ceil(
                 (Date.now() - Date.parse(oldestTimestamp)) / 86_400_000
               ) + 1
