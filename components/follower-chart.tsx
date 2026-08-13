@@ -29,9 +29,10 @@ export interface FollowerChartPoint {
   delta: number | null;
 }
 
-// Colors read against the light chart surface (#ffffff): the accent line clears
-// 3:1 contrast and grid/axis text match the muted/border tokens. See globals.css.
-const SERIES_COLOR = "#f97316";
+// Recharts sets these as SVG presentation attributes, where var() doesn't
+// resolve, so they mirror the :root tokens in globals.css by literal value.
+// (When dark mode ships, read them with getComputedStyle instead.)
+const SERIES_COLOR = "#6485e6"; // --accent
 const GRID_COLOR = "#e4e4e7";
 const AXIS_TEXT = "#71717a";
 

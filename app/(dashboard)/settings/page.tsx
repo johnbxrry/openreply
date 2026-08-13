@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useState } from "react";
 import type { AccountOption } from "@/components/account-select";
 import { InstagramConnectNotice } from "@/components/instagram-connect-notice";
+import { Skeleton } from "@/components/skeleton";
 
 interface SettingsData {
   workspace: {
@@ -119,7 +120,7 @@ export default function SettingsPage() {
   }
 
   if (loading) {
-    return <div className="panel rounded p-8 h-64" />;
+    return <Skeleton className="h-64" />;
   }
 
   const accounts = data?.instagramAccounts ?? [];
@@ -211,7 +212,7 @@ export default function SettingsPage() {
         <div className="mt-6 pt-4 border-t border-border flex gap-3">
           <a
             href="/api/instagram/connect"
-            className="px-4 py-2 rounded text-sm font-medium transition-colors bg-accent text-white hover:bg-accent-hover"
+            className="btn-primary px-4 py-2 text-sm"
           >
             {accounts.length > 0 ? "Connect another account" : "Connect Instagram"}
           </a>
@@ -309,7 +310,7 @@ export default function SettingsPage() {
             <button
               type="submit"
               disabled={busy === "invite"}
-              className="rounded bg-accent px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-accent-hover disabled:opacity-50"
+              className="btn-primary px-4 py-2 text-sm"
             >
               {busy === "invite" ? "Inviting..." : "Invite"}
             </button>

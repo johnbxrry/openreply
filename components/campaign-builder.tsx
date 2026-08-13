@@ -17,6 +17,7 @@ import { useRouter } from "next/navigation";
 import AccountSelect, { type AccountOption } from "@/components/account-select";
 import PostPicker from "@/components/post-picker";
 import CampaignPreview, { type PreviewTab } from "@/components/campaign-preview";
+import { Skeleton } from "@/components/skeleton";
 import { readCache, writeCache } from "@/lib/client-cache";
 import {
   IMPORT_QUEUE_KEY,
@@ -533,7 +534,7 @@ export default function CampaignBuilder({ mode, campaignId }: CampaignBuilderPro
   }
 
   if (loading) {
-    return <div className="panel h-64 rounded" />;
+    return <Skeleton className="h-64" />;
   }
 
   if (notFound) {
@@ -619,7 +620,7 @@ export default function CampaignBuilder({ mode, campaignId }: CampaignBuilderPro
             type="button"
             onClick={() => handleSubmit(mode === "new" ? true : isActive)}
             disabled={saving}
-            className="rounded-lg bg-accent px-5 py-2 text-sm font-medium text-white hover:bg-accent-hover disabled:opacity-50"
+            className="btn-primary px-5 py-2 text-sm"
           >
             {saving ? "Saving…" : mode === "new" ? "Go Live" : "Save changes"}
           </button>

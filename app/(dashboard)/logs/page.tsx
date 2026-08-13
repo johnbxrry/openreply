@@ -8,6 +8,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import AccountSelect, { type AccountOption } from "@/components/account-select";
+import { Skeleton } from "@/components/skeleton";
 import StatusBadge from "@/components/status-badge";
 
 interface DmLog {
@@ -150,7 +151,7 @@ export default function LogsPage() {
                   {[...Array(5)].map((_, i) => (
                     <tr key={i}>
                       <td colSpan={6} className="px-4 py-4 sm:px-6">
-                        <div className="h-4 bg-surface-hover rounded" />
+                        <Skeleton className="h-4" />
                       </td>
                     </tr>
                   ))}

@@ -10,6 +10,7 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import AccountSelect, { type AccountOption } from "@/components/account-select";
+import { Skeleton } from "@/components/skeleton";
 import { readCache, writeCache } from "@/lib/client-cache";
 
 interface Campaign {
@@ -281,7 +282,7 @@ export default function CampaignsPage() {
     return (
       <div className="space-y-4">
         {[...Array(3)].map((_, i) => (
-          <div key={i} className="panel rounded p-6 h-36" />
+          <Skeleton key={i} className="h-36" />
         ))}
       </div>
     );
@@ -328,7 +329,7 @@ export default function CampaignsPage() {
           </Link>
           <Link
             href="/campaigns/new"
-            className="flex-1 rounded bg-accent px-4 py-2 text-center text-sm font-medium text-white hover:bg-accent-hover sm:flex-none"
+            className="btn-primary flex-1 px-4 py-2 text-sm sm:flex-none"
           >
             New Campaign
           </Link>
@@ -372,7 +373,7 @@ export default function CampaignsPage() {
           </p>
           <Link
             href="/campaigns/new"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded bg-accent text-sm font-semibold text-white hover:bg-accent-hover transition-colors"
+            className="btn-primary gap-2 px-5 py-2.5 text-sm"
           >
             Create Campaign
           </Link>

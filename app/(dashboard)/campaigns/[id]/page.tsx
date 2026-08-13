@@ -10,6 +10,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { Skeleton } from "@/components/skeleton";
 import Link from "next/link";
 import CampaignPreview, { type PreviewTab } from "@/components/campaign-preview";
 
@@ -126,7 +127,7 @@ export default function CampaignDetailPage() {
   }
 
   if (loading) {
-    return <div className="panel h-64 rounded" />;
+    return <Skeleton className="h-64" />;
   }
   if (notFound || !campaign) {
     return (

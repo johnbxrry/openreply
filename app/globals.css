@@ -1,21 +1,40 @@
 @import "tailwindcss";
 
-/* ManyChat Alternative — Design System
-   Plain and functional. No gradients, glass, glow, or animation. */
+/* OpenReply — Design System
+   Light-only today; raw values live on :root so a future `.dark` block can
+   override them without touching @theme. Restraint everywhere except the
+   frosted accent buttons (.btn-primary) and shimmer skeletons (.skeleton),
+   which are the sanctioned uses of gradient/shadow/animation. */
+
+:root {
+  --background: #ffffff;
+  --foreground: #18181b;
+  --surface: #f7f7f8;
+  --surface-hover: #efeff1;
+  --border: #e4e4e7;
+  --border-hover: #d4d4d8;
+  --muted: #71717a;
+  --accent: #6485e6; /* periwinkle base */
+  --accent-hover: #5273de;
+  --accent-active: #4767d2; /* pressed state; consumed by .btn-primary only */
+  --success: #16a34a;
+  --error: #dc2626;
+  --warning: #d97706;
+}
 
 @theme inline {
-  --color-background: #ffffff;
-  --color-foreground: #18181b;
-  --color-surface: #f7f7f8;
-  --color-surface-hover: #efeff1;
-  --color-border: #e4e4e7;
-  --color-border-hover: #d4d4d8;
-  --color-muted: #71717a;
-  --color-accent: #f97316;
-  --color-accent-hover: #ea580c;
-  --color-success: #16a34a;
-  --color-error: #dc2626;
-  --color-warning: #d97706;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-hover: var(--surface-hover);
+  --color-border: var(--border);
+  --color-border-hover: var(--border-hover);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-success: var(--success);
+  --color-error: var(--error);
+  --color-warning: var(--warning);
   --font-sans: system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: ui-monospace, monospace;
 }
@@ -61,6 +80,108 @@ select:focus-visible {
   border: 1px solid var(--color-border);
 }
 
+@layer components {
+  /* Frosted primary action. Sizing (padding, text size, width) stays at the
+     call site; this owns color, radius, gradient, and shadows. Everything
+     derives from var(--accent) so a token change recolors the whole set. */
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 0.25rem;
+    font-weight: 600;
+    color: #ffffff;
+    background-color: var(--accent);
+    background-image: linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--accent), white 16%),
+      var(--accent)
+    );
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.4),
+      0 1px 2px color-mix(in srgb, var(--accent), black 20%),
+      0 4px 12px color-mix(in srgb, var(--accent), transparent 65%);
+    transition:
+      background-color 150ms,
+      box-shadow 150ms;
+  }
+  .btn-primary:hover {
+    background-color: var(--accent-hover);
+    background-image: linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--accent-hover), white 14%),
+      var(--accent-hover)
+    );
+  }
+  .btn-primary:active {
+    background-color: var(--accent-active);
+    background-image: none;
+    box-shadow:
+      inset 0 1px 2px rgba(0, 0, 0, 0.18),
+      0 1px 2px color-mix(in srgb, var(--accent), transparent 70%);
+  }
+  .btn-primary:disabled,
+  .btn-primary[aria-disabled="true"] {
+    opacity: 0.5;
+    pointer-events: none;
+    box-shadow: none;
+    background-image: none;
+  }
+
+  /* Quiet bordered action — codifies the existing border-border pattern. */
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 0.25rem;
+    border: 1px solid var(--border);
+    background: var(--background);
+    font-weight: 500;
+    color: var(--foreground);
+    transition:
+      border-color 150ms,
+      background-color 150ms,
+      color 150ms;
+  }
+  .btn-secondary:hover {
+    border-color: var(--border-hover);
+    background: var(--surface-hover);
+  }
+  .btn-secondary:disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  /* Shimmer skeleton — loading placeholder. Size it at the call site. */
+  .skeleton {
+    position: relative;
+    overflow: hidden;
+    border-radius: 0.25rem;
+    background: var(--surface-hover);
+  }
+  .skeleton::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in srgb, var(--background), transparent 40%),
+      transparent
+    );
+    animation: shimmer 1.6s ease-in-out infinite;
+  }
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
 /* Kept as no-op aliases so existing markup degrades to plain surfaces
    instead of breaking. Prefer .panel in new code. */
 .glass,
@@ -84,7 +205,14 @@ select:focus-visible {
   *,
   *::before,
   *::after {
+    /* iteration-count matters: without it an infinite animation would loop
+       every 0.01ms and burn CPU instead of stopping. */
     animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+
+  .skeleton::after {
+    animation: none;
   }
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Skeleton } from "@/components/skeleton";
 import StatusBadge from "@/components/status-badge";
 
 interface DiagnosticsData {
@@ -111,7 +112,7 @@ export default function DiagnosticsPage() {
   }, []);
 
   if (loading && !data) {
-    return <div className="panel rounded p-8 h-64" />;
+    return <Skeleton className="h-64" />;
   }
 
   const workerAgeSeconds =
