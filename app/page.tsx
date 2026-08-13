@@ -149,9 +149,12 @@ export default function Home() {
       <header className="sticky top-0 z-40 border-b border-border bg-background">
         <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-5 sm:px-6 lg:px-8">
           <Link href="/" className="flex items-center gap-3" aria-label="OpenReply home">
-            <span className="text-lg font-medium text-foreground">
-              OpenReply
-            </span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/openreply-mark.svg"
+              alt="OpenReply"
+              className="h-8 w-auto opacity-90"
+            />
           </Link>
 
           <Link
