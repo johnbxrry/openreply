@@ -9,7 +9,7 @@
 import { useEffect, useState } from "react";
 import AccountSelect, { type AccountOption } from "@/components/account-select";
 import DmChart from "@/components/dm-chart";
-import { PanelSkeleton, Skeleton } from "@/components/skeleton";
+import { PanelSkeleton, Skeleton, StatTileSkeleton } from "@/components/skeleton";
 import StatCard from "@/components/stat-card";
 import StatusBadge from "@/components/status-badge";
 
@@ -97,11 +97,7 @@ export default function DashboardPage() {
         </div>
         <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4">
           {[...Array(6)].map((_, i) => (
-            <div key={i} className="panel rounded p-5 h-32">
-              <Skeleton className="w-10 h-10" />
-              <Skeleton className="mt-4 h-6 w-16" />
-              <Skeleton className="mt-2 h-4 w-24" />
-            </div>
+            <StatTileSkeleton key={i} />
           ))}
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-6 gap-4 sm:gap-6">
