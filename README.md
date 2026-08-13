@@ -52,13 +52,15 @@ The web app receives the webhook and serves the dashboard. A separate worker pro
 
 You need a few free accounts before anything works: a Meta developer app, a Resend account for login emails, and somewhere to host (Vercel for the web app, Railway for the worker plus Postgres and Redis). The Instagram account you connect has to be a Business or Creator account, not a personal one.
 
-The honest version: the code deploys in minutes, but the Meta app setup is the part that takes real time. Read [docs/setup.md](docs/setup.md) before you start. It is the single setup guide, covering hosting, your domain, the environment, and every Meta wrong turn so you do not have to find them yourself.
+The honest version: the code deploys in minutes, but the Meta app setup is the part that takes real time. Read [docs/setup.md](docs/setup.md) before you start. It is the single setup guide, covering hosting, your domain, the environment, and every Meta wrong turn so you do not have to find them yourself. The whole hosted deploy can be driven from the Railway and Vercel CLIs — no dashboard clicking and no GitHub integration required; the guide shows the exact commands.
 
 ### Deploy the web app
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/diwenne/openreply)
 
 ### Run it locally
+
+You need Node.js 24+ (Prisma 7 requires 20.19+/22.12+/24+; the repo pins 24 via `.node-version`).
 
 ```bash
 git clone https://github.com/diwenne/openreply.git

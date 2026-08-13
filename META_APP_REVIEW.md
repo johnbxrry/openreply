@@ -9,6 +9,9 @@ OpenReply uses the official Instagram API to send a private reply to someone who
 - `instagram_business_basic`
 - `instagram_business_manage_comments`
 - `instagram_business_manage_messages`
+- `instagram_business_manage_insights`
+
+These four match the scopes the app requests during OAuth (`lib/meta/oauth.ts`). Request all four — a connection made without one of them throws a PermissionError when the corresponding feature is used.
 
 ## Permission justifications
 
@@ -19,6 +22,8 @@ Paste these into the App Review request, adjusted to your wording.
 `instagram_business_manage_comments`. When a follower comments a keyword the account owner configured on the owner's own post or reel, we receive the comment through the comments webhook and, if the owner enabled it, post a public reply under that comment. We only act on comments on the connecting account's own media.
 
 `instagram_business_manage_messages`. After a follower comments a configured keyword, we send that follower a one-time private reply with content the account owner set up, typically a link or answer the follower asked for by commenting. This is the standard Instagram comment-to-DM flow. We send one reply per matching comment and respect Meta's rate limits.
+
+`instagram_business_manage_insights`. We read the connected account's own follower count and account insights to render the follower-growth chart and campaign reports the account owner sees on their dashboard. We only read insights for the account that authorized the app, and we display them only to that account's workspace.
 
 ## Screencast script
 
