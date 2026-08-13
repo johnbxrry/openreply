@@ -202,7 +202,7 @@ export default function DashboardPage() {
         {/* Recent Activity */}
         <div className="lg:col-span-2 panel rounded p-4 sm:p-6">
           <h2 className="text-sm font-medium text-foreground mb-4">Recent Activity</h2>
-          <div className="space-y-3 max-h-60 overflow-y-auto">
+          <div className="no-scrollbar space-y-3 max-h-60 overflow-y-auto">
             {stats?.recentLogs.length === 0 && (
               <p className="text-sm text-muted text-center py-8">No activity yet</p>
             )}

@@ -282,7 +282,7 @@ export default function InboxPage() {
           <div className="shrink-0 border-b border-border px-4 py-3 text-sm font-medium text-foreground">
             Conversations
           </div>
-          <div className="min-h-0 flex-1 overflow-y-auto">
+          <div className="no-scrollbar min-h-0 flex-1 overflow-y-auto">
             {convLoading ? (
               <div className="space-y-2 px-4 py-4">
                 {[...Array(4)].map((_, i) => (
@@ -351,7 +351,7 @@ export default function InboxPage() {
                 </span>
               </div>
 
-              <div ref={scrollRef} className="min-h-0 flex-1 space-y-2 overflow-y-auto p-4">
+              <div ref={scrollRef} className="no-scrollbar min-h-0 flex-1 space-y-2 overflow-y-auto p-4">
                 {threadLoading && messages.length === 0 ? (
                   <>
                     <Skeleton className="h-10 w-2/3 rounded-2xl" />
