@@ -150,6 +150,15 @@ select:focus-visible {
     pointer-events: none;
   }
 
+  /* Scrollable region with the scrollbar hidden (still scrolls). */
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
   /* Shimmer skeleton — loading placeholder. Size it at the call site. */
   .skeleton {
     position: relative;

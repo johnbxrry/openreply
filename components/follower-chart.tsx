@@ -139,7 +139,7 @@ export default function FollowerChart({
           </p>
         </div>
       ) : showTable ? (
-        <div className="mt-4 max-h-72 overflow-y-auto">
+        <div className="no-scrollbar mt-4 max-h-72 overflow-y-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border text-left text-xs uppercase tracking-wide text-zinc-500">
