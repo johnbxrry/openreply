@@ -90,19 +90,23 @@ describe("computeTrend", () => {
 });
 
 describe("sparklineSeries", () => {
-  it("returns one value per post for small ranges, oldest first", () => {
+  it("returns one dated point per post for small ranges, oldest first", () => {
     const series = sparklineSeries(postsWithLikes([1, 2, 3]), "likes");
-    expect(series).toEqual([1, 2, 3]);
+    expect(series.map((p) => p.value)).toEqual([1, 2, 3]);
+    expect(series[0].date).toBe("2026-08-01");
+    expect(series[2].date).toBe("2026-08-03");
   });
 
-  it("buckets larger ranges into chunk sums", () => {
+  it("buckets larger ranges into chunk sums dated by the bucket's last post", () => {
     const series = sparklineSeries(
       postsWithLikes(Array.from({ length: 24 }, () => 1)),
       "likes",
       12
     );
     expect(series).toHaveLength(12);
-    expect(series.every((v) => v === 2)).toBe(true);
+    expect(series.every((p) => p.value === 2)).toBe(true);
+    expect(series[0].date).toBe("2026-08-02");
+    expect(series[11].date).toBe("2026-08-24");
   });
 
   it("returns [] for fewer than 2 posts", () => {

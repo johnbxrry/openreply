@@ -1,13 +1,18 @@
+"use client";
+
 /**
  * Sparkline
  *
- * Tiny inline-SVG trend line for stat tiles. Deliberately not Recharts — six
- * chart instances would be heavy for a 96×28 decoration. Colors are literal
- * hex mirroring the :root tokens (SVG presentation attributes can't resolve
- * var()): --success #22c55e, --muted #909090, --error #ef4444.
+ * Scaled-down version of the analytics area chart for stat tiles: smooth
+ * monotone curve, gradient fill, and a hover tooltip showing date + value.
+ * Colors are literal hex mirroring the :root tokens (SVG presentation
+ * attributes can't resolve var()): --success #22c55e, --muted #909090,
+ * --error #ef4444.
  */
 
-import type { TrendDirection } from "@/lib/analytics-trends";
+import { useId } from "react";
+import { Area, AreaChart, Tooltip } from "recharts";
+import type { SparklinePoint, TrendDirection } from "@/lib/analytics-trends";
 
 const STROKE: Record<TrendDirection, string> = {
   up: "#22c55e",
@@ -15,54 +20,79 @@ const STROKE: Record<TrendDirection, string> = {
   down: "#ef4444",
 };
 
+function formatDay(iso: string): string {
+  const d = new Date(`${iso}T00:00:00`);
+  if (Number.isNaN(d.getTime())) return iso;
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+
+function SparkTooltip({
+  active,
+  payload,
+}: {
+  active?: boolean;
+  payload?: Array<{ payload: SparklinePoint }>;
+}) {
+  if (!active || !payload?.length) return null;
+  const point = payload[0].payload;
+  return (
+    <div className="rounded border border-border bg-surface px-2 py-1 text-[11px] shadow-lg whitespace-nowrap">
+      <span className="text-muted">{formatDay(point.date)}</span>{" "}
+      <span className="font-medium text-foreground">
+        {point.value.toLocaleString()}
+      </span>
+    </div>
+  );
+}
+
 export default function Sparkline({
-  values,
+  points,
   direction,
-  width = 96,
-  height = 28,
+  width = 80,
+  height = 26,
   className = "",
 }: {
-  values: number[]; // oldest → newest
+  points: SparklinePoint[]; // oldest → newest
   direction: TrendDirection;
   width?: number;
   height?: number;
   className?: string;
 }) {
-  if (values.length < 2) return null;
-
-  const min = Math.min(...values);
-  const max = Math.max(...values);
-  const pad = 2;
-  const span = max - min;
-  const points = values
-    .map((v, i) => {
-      const x = (i / (values.length - 1)) * width;
-      // Flat series draws a midline instead of hugging an edge.
-      const y =
-        span === 0
-          ? height / 2
-          : pad + (1 - (v - min) / span) * (height - pad * 2);
-      return `${x.toFixed(1)},${y.toFixed(1)}`;
-    })
-    .join(" ");
+  const gradientId = useId();
+  if (points.length < 2) return null;
+  const color = STROKE[direction];
 
   return (
-    <svg
-      viewBox={`0 0 ${width} ${height}`}
-      preserveAspectRatio="none"
-      className={className}
-      style={{ width, height }}
-      aria-hidden="true"
-    >
-      <polyline
-        points={points}
-        fill="none"
-        stroke={STROKE[direction]}
-        strokeWidth="1.5"
-        strokeLinejoin="round"
-        strokeLinecap="round"
-        vectorEffect="non-scaling-stroke"
-      />
-    </svg>
+    <div className={className} style={{ width, height }}>
+      <AreaChart
+        width={width}
+        height={height}
+        data={points}
+        margin={{ top: 2, right: 0, bottom: 2, left: 0 }}
+      >
+        <defs>
+          <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="5%" stopColor={color} stopOpacity={0.3} />
+            <stop offset="95%" stopColor={color} stopOpacity={0.02} />
+          </linearGradient>
+        </defs>
+        <Tooltip
+          content={<SparkTooltip />}
+          cursor={{ stroke: color, strokeWidth: 1, strokeOpacity: 0.4 }}
+          allowEscapeViewBox={{ x: true, y: true }}
+          wrapperStyle={{ zIndex: 40 }}
+          isAnimationActive={false}
+        />
+        <Area
+          type="monotone"
+          dataKey="value"
+          stroke={color}
+          strokeWidth={1.5}
+          fill={`url(#${gradientId})`}
+          isAnimationActive={false}
+          activeDot={{ r: 3, fill: color, stroke: "#ffffff", strokeWidth: 1.5 }}
+        />
+      </AreaChart>
+    </div>
   );
 }

@@ -5,7 +5,7 @@
  * arrow + percent change on the left, micro sparkline on the right.
  */
 
-import type { Trend } from "@/lib/analytics-trends";
+import type { SparklinePoint, Trend } from "@/lib/analytics-trends";
 import Sparkline from "@/components/sparkline";
 
 const ARROWS = { up: "▲", neutral: "—", down: "▼" } as const;
@@ -25,7 +25,7 @@ interface StatCardProps {
   label: string;
   value: string | number;
   trend?: Trend;
-  spark?: number[];
+  spark?: SparklinePoint[];
 }
 
 export default function StatCard({ label, value, trend, spark }: StatCardProps) {
@@ -40,10 +40,10 @@ export default function StatCard({ label, value, trend, spark }: StatCardProps) 
           </span>
           {spark && spark.length > 1 && (
             <Sparkline
-              values={spark}
+              points={spark}
               direction={trend.direction}
               width={72}
-              height={22}
+              height={24}
               className="shrink-0"
             />
           )}

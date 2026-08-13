@@ -66,25 +66,38 @@ export function computeTrend(posts: TrendPost[], metric: MetricKey): Trend {
   return trendFromChange((recentSum - olderSum) / olderSum);
 }
 
+export interface SparklinePoint {
+  date: string; // ISO yyyy-mm-dd of the post (or the last post in a bucket)
+  value: number;
+}
+
 /**
- * Oldest→newest series for a tile sparkline. One value per post when the
+ * Oldest→newest series for a tile sparkline. One point per post when the
  * range is small; otherwise posts are grouped into `buckets` equal-count
- * chunks and summed so the line stays readable.
+ * chunks and summed so the line stays readable. Each point carries the date
+ * so hover tooltips can label it.
  */
 export function sparklineSeries(
   posts: TrendPost[],
   metric: MetricKey,
   buckets = 12
-): number[] {
+): SparklinePoint[] {
   if (posts.length < 2) return [];
   const sorted = sortAsc(posts);
   if (sorted.length <= buckets) {
-    return sorted.map((p) => p[metric] ?? 0);
+    return sorted.map((p) => ({
+      date: p.timestamp.slice(0, 10),
+      value: p[metric] ?? 0,
+    }));
   }
   const chunkSize = Math.ceil(sorted.length / buckets);
-  const series: number[] = [];
+  const series: SparklinePoint[] = [];
   for (let i = 0; i < sorted.length; i += chunkSize) {
-    series.push(sumMetric(sorted.slice(i, i + chunkSize), metric));
+    const chunk = sorted.slice(i, i + chunkSize);
+    series.push({
+      date: chunk[chunk.length - 1].timestamp.slice(0, 10),
+      value: sumMetric(chunk, metric),
+    });
   }
   return series;
 }

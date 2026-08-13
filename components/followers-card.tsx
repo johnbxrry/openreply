@@ -3,44 +3,41 @@
 /**
  * Followers Card
  *
- * Shopify-style followers panel. "This week" overlays the last 7 days as a
- * gradient area against the same weekdays one week earlier as a dashed line;
- * "This month" / "60 days" show a single gradient area over that window.
- * A table toggle lists the full stored history.
+ * Shopify-style followers panel: one gradient area line over the selected
+ * window (this week / this month / 60 days). The header gain figure follows
+ * the selected window. A table toggle lists the full stored history.
  */
 
 import { useMemo, useState } from "react";
 import {
   Area,
+  AreaChart,
   CartesianGrid,
-  ComposedChart,
-  Line,
   ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
 import type { FollowerHistoryPoint } from "@/lib/reports/follower-history";
-import {
-  buildWeekOverWeekSeries,
-  buildWindowSeries,
-  weekOverWeekGain,
-  type WeekOverWeekPoint,
-} from "@/lib/analytics-trends";
+import { buildWindowSeries } from "@/lib/analytics-trends";
 
 // Recharts sets these as SVG presentation attributes, where var() doesn't
 // resolve, so they mirror the :root tokens in globals.css by literal value.
 const SERIES_COLOR = "#4c88f7"; // --accent
-const COMPARE_COLOR = "#909090"; // --muted
 const GRID_COLOR = "#222222"; // --border
 const AXIS_TEXT = "#909090"; // --muted
 
 type ChartWindow = "week" | "month" | "sixty";
 
-const WINDOW_OPTIONS: { value: ChartWindow; label: string }[] = [
-  { value: "week", label: "This week" },
-  { value: "month", label: "This month" },
-  { value: "sixty", label: "60 days" },
+const WINDOW_OPTIONS: {
+  value: ChartWindow;
+  label: string;
+  days: number;
+  gainLabel: string;
+}[] = [
+  { value: "week", label: "This week", days: 7, gainLabel: "this week" },
+  { value: "month", label: "This month", days: 30, gainLabel: "this month" },
+  { value: "sixty", label: "60 days", days: 60, gainLabel: "past 60 days" },
 ];
 
 function formatDay(iso: string): string {
@@ -59,40 +56,7 @@ function formatCompact(n: number): string {
   return `${n}`;
 }
 
-function WeekTooltip({
-  active,
-  payload,
-}: {
-  active?: boolean;
-  payload?: Array<{ payload: WeekOverWeekPoint }>;
-}) {
-  if (!active || !payload?.length) return null;
-  const p = payload[0].payload;
-  const delta =
-    p.thisWeek !== null && p.lastWeek !== null ? p.thisWeek - p.lastWeek : null;
-  return (
-    <div className="rounded border border-border bg-surface px-3 py-2 text-xs shadow-lg">
-      <p className="text-muted">{formatDay(p.thisDate)}</p>
-      {p.thisWeek !== null && (
-        <p className="mt-1 font-medium text-foreground">
-          {p.thisWeek.toLocaleString()} followers
-        </p>
-      )}
-      {p.lastWeek !== null && (
-        <p className="mt-0.5 text-muted">
-          Last week ({formatDay(p.lastDate)}): {p.lastWeek.toLocaleString()}
-        </p>
-      )}
-      {delta !== null && delta !== 0 && (
-        <p className={delta > 0 ? "text-success" : "text-error"}>
-          {formatSigned(delta)} vs last week
-        </p>
-      )}
-    </div>
-  );
-}
-
-function WindowTooltip({
+function ChartTooltip({
   active,
   payload,
 }: {
@@ -116,12 +80,6 @@ function WindowTooltip({
   );
 }
 
-const axisProps = {
-  tick: { fill: AXIS_TEXT, fontSize: 12 },
-  stroke: GRID_COLOR,
-  tickLine: false,
-} as const;
-
 export default function FollowersCard({
   history,
   followers,
@@ -130,21 +88,20 @@ export default function FollowersCard({
   followers: number | null;
 }) {
   const [showTable, setShowTable] = useState(false);
-  const [window, setWindow] = useState<ChartWindow>("week");
+  const [window, setWindow] = useState<ChartWindow>("month");
+
+  const option =
+    WINDOW_OPTIONS.find((o) => o.value === window) ?? WINDOW_OPTIONS[1];
 
   const current = followers ?? history.at(-1)?.followers ?? null;
-  const weekSeries = useMemo(() => buildWeekOverWeekSeries(history), [history]);
-  const wow = useMemo(() => weekOverWeekGain(history), [history]);
-  const windowSeries = useMemo(
-    () => buildWindowSeries(history, window === "month" ? 30 : 60),
-    [history, window]
+  const series = useMemo(
+    () => buildWindowSeries(history, option.days),
+    [history, option.days]
   );
-
-  const hasLastWeek = weekSeries.some((p) => p.lastWeek !== null);
-  const chartablePoints =
-    window === "week"
-      ? weekSeries.filter((p) => p.thisWeek !== null).length
-      : windowSeries.length;
+  const gain =
+    series.length >= 2
+      ? series[series.length - 1].followers - series[0].followers
+      : null;
 
   return (
     <div className="panel rounded p-4 sm:p-6">
@@ -157,13 +114,13 @@ export default function FollowersCard({
             {current === null
               ? "Follower count unavailable"
               : `${current.toLocaleString()} now`}
-            {wow.thisWeek !== null && (
+            {gain !== null && (
               <>
                 {" · "}
-                <span className={wow.thisWeek >= 0 ? "text-success" : "text-error"}>
-                  {formatSigned(wow.thisWeek)}
+                <span className={gain >= 0 ? "text-success" : "text-error"}>
+                  {formatSigned(gain)}
                 </span>{" "}
-                this week
+                {option.gainLabel}
               </>
             )}
           </p>
@@ -193,7 +150,7 @@ export default function FollowersCard({
         </div>
       </div>
 
-      {chartablePoints < 2 && !showTable ? (
+      {series.length < 2 && !showTable ? (
         <div className="mt-6 rounded border border-border bg-surface/60 p-6 text-center">
           <p className="text-sm text-foreground">Collecting follower history</p>
           <p className="mt-1 text-sm text-muted">
@@ -230,128 +187,61 @@ export default function FollowersCard({
           </table>
         </div>
       ) : (
-        <>
-          <div className="mt-6 h-56 sm:h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              {window === "week" ? (
-                <ComposedChart
-                  data={weekSeries}
-                  margin={{ top: 8, right: 16, bottom: 0, left: 0 }}
-                >
-                  <defs>
-                    <linearGradient id="followersFill" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor={SERIES_COLOR} stopOpacity={0.35} />
-                      <stop offset="95%" stopColor={SERIES_COLOR} stopOpacity={0.02} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid vertical={false} stroke={GRID_COLOR} strokeDasharray="3 3" />
-                  <XAxis dataKey="weekday" {...axisProps} />
-                  <YAxis
-                    {...axisProps}
-                    tickFormatter={formatCompact}
-                    width={52}
-                    domain={["dataMin - 5", "dataMax + 5"]}
-                  />
-                  <Tooltip
-                    content={<WeekTooltip />}
-                    cursor={{ stroke: GRID_COLOR, strokeWidth: 1 }}
-                  />
-                  {hasLastWeek && (
-                    <Line
-                      type="monotone"
-                      dataKey="lastWeek"
-                      stroke={COMPARE_COLOR}
-                      strokeWidth={1.5}
-                      strokeDasharray="4 4"
-                      dot={false}
-                      connectNulls
-                      isAnimationActive={false}
-                    />
-                  )}
-                  <Area
-                    type="monotone"
-                    dataKey="thisWeek"
-                    stroke={SERIES_COLOR}
-                    strokeWidth={2}
-                    fill="url(#followersFill)"
-                    connectNulls
-                    isAnimationActive={false}
-                    activeDot={{
-                      r: 4,
-                      fill: SERIES_COLOR,
-                      stroke: "#ffffff",
-                      strokeWidth: 2,
-                    }}
-                  />
-                </ComposedChart>
-              ) : (
-                <ComposedChart
-                  data={windowSeries}
-                  margin={{ top: 8, right: 16, bottom: 0, left: 0 }}
-                >
-                  <defs>
-                    <linearGradient id="followersFillLong" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor={SERIES_COLOR} stopOpacity={0.35} />
-                      <stop offset="95%" stopColor={SERIES_COLOR} stopOpacity={0.02} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid vertical={false} stroke={GRID_COLOR} strokeDasharray="3 3" />
-                  <XAxis
-                    dataKey="date"
-                    {...axisProps}
-                    tickFormatter={formatDay}
-                    minTickGap={24}
-                  />
-                  <YAxis
-                    {...axisProps}
-                    tickFormatter={formatCompact}
-                    width={52}
-                    domain={["dataMin - 5", "dataMax + 5"]}
-                  />
-                  <Tooltip
-                    content={<WindowTooltip />}
-                    cursor={{ stroke: GRID_COLOR, strokeWidth: 1 }}
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="followers"
-                    stroke={SERIES_COLOR}
-                    strokeWidth={2}
-                    fill="url(#followersFillLong)"
-                    connectNulls
-                    isAnimationActive={false}
-                    activeDot={{
-                      r: 4,
-                      fill: SERIES_COLOR,
-                      stroke: "#ffffff",
-                      strokeWidth: 2,
-                    }}
-                  />
-                </ComposedChart>
-              )}
-            </ResponsiveContainer>
-          </div>
-          {window === "week" && (
-            <div className="mt-3 flex items-center gap-4 text-xs text-muted">
-              <span className="inline-flex items-center gap-1.5">
-                <span
-                  className="inline-block h-0.5 w-4"
-                  style={{ background: SERIES_COLOR }}
-                />
-                this week
-              </span>
-              {hasLastWeek && (
-                <span className="inline-flex items-center gap-1.5">
-                  <span
-                    className="inline-block w-4 border-t-2 border-dashed"
-                    style={{ borderColor: COMPARE_COLOR }}
-                  />
-                  last week
-                </span>
-              )}
-            </div>
-          )}
-        </>
+        <div className="mt-6 h-56 sm:h-64">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart
+              data={series}
+              margin={{ top: 8, right: 16, bottom: 0, left: 0 }}
+            >
+              <defs>
+                <linearGradient id="followersFill" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor={SERIES_COLOR} stopOpacity={0.35} />
+                  <stop offset="95%" stopColor={SERIES_COLOR} stopOpacity={0.02} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid
+                vertical={false}
+                stroke={GRID_COLOR}
+                strokeDasharray="3 3"
+              />
+              <XAxis
+                dataKey="date"
+                tickFormatter={formatDay}
+                tick={{ fill: AXIS_TEXT, fontSize: 12 }}
+                stroke={GRID_COLOR}
+                tickLine={false}
+                minTickGap={24}
+              />
+              <YAxis
+                tickFormatter={formatCompact}
+                tick={{ fill: AXIS_TEXT, fontSize: 12 }}
+                stroke={GRID_COLOR}
+                tickLine={false}
+                width={52}
+                domain={["dataMin - 5", "dataMax + 5"]}
+              />
+              <Tooltip
+                content={<ChartTooltip />}
+                cursor={{ stroke: GRID_COLOR, strokeWidth: 1 }}
+              />
+              <Area
+                type="monotone"
+                dataKey="followers"
+                stroke={SERIES_COLOR}
+                strokeWidth={2}
+                fill="url(#followersFill)"
+                connectNulls
+                isAnimationActive={false}
+                activeDot={{
+                  r: 4,
+                  fill: SERIES_COLOR,
+                  stroke: "#ffffff",
+                  strokeWidth: 2,
+                }}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
       )}
     </div>
   );

@@ -102,6 +102,21 @@ export default function InstagramAnalyticsPage() {
       : null;
     const wow = weekOverWeekGain(followerHistory);
 
+    // Best performing post this week (falls back to the whole range when the
+    // week has no posts). Score by views where available, else interactions.
+    // "This week" is anchored to the newest post rather than the wall clock,
+    // which keeps this render-pure (react-hooks/purity) and data-relative.
+    const score = (p: (typeof posts)[number]) =>
+      p.views ?? p.likes + p.comments + (p.saved ?? 0) + (p.shares ?? 0);
+    const newestMs = posts.length > 0 ? Date.parse(posts[0].timestamp) : 0;
+    const weekAgoMs = newestMs - 7 * 86_400_000;
+    const thisWeek = posts.filter((p) => Date.parse(p.timestamp) >= weekAgoMs);
+    const bestPool = thisWeek.length > 0 ? thisWeek : posts;
+    const bestPost =
+      bestPool.length > 0
+        ? bestPool.reduce((a, b) => (score(b) > score(a) ? b : a))
+        : null;
+
     return {
       tiles,
       avgViews: averageMetricPerPost(posts, "views"),
@@ -114,6 +129,8 @@ export default function InstagramAnalyticsPage() {
         totals.reach > 0 ? (totals.interactions / totals.reach) * 100 : null,
       followerTrend: wow.trend,
       engTrend: engagementTrend(posts),
+      bestPost,
+      bestIsThisWeek: thisWeek.length > 0,
     };
   }, [data]);
 
@@ -276,14 +293,14 @@ export default function InstagramAnalyticsPage() {
         </p>
         <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
           <StatCard
-            label="Avg views / post"
+            label="AVERAGE views / post"
             value={formatNumber(
               analytics.avgViews === null ? null : Math.round(analytics.avgViews)
             )}
             trend={computeTrend(posts, "views")}
           />
           <StatCard
-            label="Avg follower gain / post"
+            label="AVERAGE follower gain / post"
             value={
               analytics.avgFollowerGain === null
                 ? "—"
@@ -292,14 +309,14 @@ export default function InstagramAnalyticsPage() {
             trend={analytics.followerTrend}
           />
           <StatCard
-            label="Avg saves / post"
+            label="AVERAGE saves / post"
             value={formatNumber(
               analytics.avgSaves === null ? null : Math.round(analytics.avgSaves)
             )}
             trend={computeTrend(posts, "saved")}
           />
           <StatCard
-            label="Views → follower conv."
+            label="FOLLOWER CONVERSION"
             value={
               analytics.conversion === null
                 ? "—"
@@ -318,6 +335,90 @@ export default function InstagramAnalyticsPage() {
           />
         </div>
       </div>
+
+      {/* Best performing content */}
+      {analytics.bestPost && (
+        <div className="panel rounded p-4 sm:p-6">
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <h3 className="text-sm font-medium text-foreground">
+              Best performing content
+            </h3>
+            <span className="text-xs text-muted">
+              {analytics.bestIsThisWeek
+                ? "This week"
+                : "No posts this week — best of this range"}
+            </span>
+          </div>
+          <div className="mt-4 flex items-start gap-4">
+            {analytics.bestPost.thumbnailUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={analytics.bestPost.thumbnailUrl}
+                alt=""
+                className="h-20 w-20 shrink-0 rounded object-cover border border-border"
+              />
+            ) : (
+              <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded border border-border bg-surface-hover text-xs text-muted">
+                {analytics.bestPost.mediaType}
+              </div>
+            )}
+            <div className="min-w-0">
+              {analytics.bestPost.permalink ? (
+                <a
+                  href={analytics.bestPost.permalink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block truncate text-sm font-medium text-foreground hover:text-accent"
+                >
+                  {analytics.bestPost.caption ||
+                    `${analytics.bestPost.mediaType} post`}
+                </a>
+              ) : (
+                <p className="truncate text-sm font-medium text-foreground">
+                  {analytics.bestPost.caption ||
+                    `${analytics.bestPost.mediaType} post`}
+                </p>
+              )}
+              <p className="mt-1 text-xs text-muted">
+                {formatDate(analytics.bestPost.timestamp)} ·{" "}
+                {analytics.bestPost.mediaType}
+              </p>
+              <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted">
+                <span>
+                  Views{" "}
+                  <span className="text-foreground">
+                    {formatNumber(analytics.bestPost.views)}
+                  </span>
+                </span>
+                <span>
+                  Likes{" "}
+                  <span className="text-foreground">
+                    {formatNumber(analytics.bestPost.likes)}
+                  </span>
+                </span>
+                <span>
+                  Comments{" "}
+                  <span className="text-foreground">
+                    {formatNumber(analytics.bestPost.comments)}
+                  </span>
+                </span>
+                <span>
+                  Saved{" "}
+                  <span className="text-foreground">
+                    {formatNumber(analytics.bestPost.saved)}
+                  </span>
+                </span>
+                <span>
+                  Shares{" "}
+                  <span className="text-foreground">
+                    {formatNumber(analytics.bestPost.shares)}
+                  </span>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Per-post table */}
       <div className="panel rounded p-4 sm:p-6">
