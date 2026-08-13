@@ -23,6 +23,11 @@ export async function GET(request: NextRequest) {
   const weekStart = new Date(todayStart);
   weekStart.setDate(weekStart.getDate() - 7);
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  const requestedRange = request.nextUrl.searchParams.get("range");
+  const chartRange =
+    requestedRange === "month" || requestedRange === "year"
+      ? requestedRange
+      : "week";
   const requestedInstagramAccountId =
     request.nextUrl.searchParams.get("instagramAccountId");
   const selectedAccountId =
@@ -149,26 +154,53 @@ export async function GET(request: NextRequest) {
     }),
   ]);
 
+  // DM chart series. Buckets are daily for week/month ranges and monthly for
+  // the year range; dates are ISO (yyyy-mm-dd) so the client owns formatting.
+  // One fetch + in-memory bucketing instead of a count query per bucket.
+  const monthlyBuckets = chartRange === "year";
+  const chartStart = new Date(todayStart);
+  if (chartRange === "week") {
+    chartStart.setDate(chartStart.getDate() - 6);
+  } else if (chartRange === "month") {
+    chartStart.setDate(chartStart.getDate() - 29);
+  } else {
+    chartStart.setMonth(chartStart.getMonth() - 11);
+    chartStart.setDate(1);
+  }
+
+  const isoDay = (d: Date) =>
+    `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
+      d.getDate()
+    ).padStart(2, "0")}`;
+
+  const sentLogs = await prisma.dmLog.findMany({
+    where: {
+      workspaceId,
+      status: "SENT",
+      createdAt: { gte: chartStart },
+      ...accountFilter,
+    },
+    select: { createdAt: true },
+  });
+
+  const bucketCounts = new Map<string, number>();
+  for (const log of sentLogs) {
+    const d = new Date(log.createdAt);
+    if (monthlyBuckets) d.setDate(1);
+    const key = isoDay(d);
+    bucketCounts.set(key, (bucketCounts.get(key) ?? 0) + 1);
+  }
+
   const dailyDMs: { date: string; count: number }[] = [];
-  for (let i = 6; i >= 0; i--) {
-    const dayStart = new Date(todayStart);
-    dayStart.setDate(dayStart.getDate() - i);
-    const dayEnd = new Date(dayStart);
-    dayEnd.setDate(dayEnd.getDate() + 1);
-
-    const count = await prisma.dmLog.count({
-      where: {
-        workspaceId,
-        status: "SENT",
-        createdAt: { gte: dayStart, lt: dayEnd },
-        ...accountFilter,
-      },
-    });
-
-    dailyDMs.push({
-      date: dayStart.toLocaleDateString("en-US", { weekday: "short" }),
-      count,
-    });
+  const cursor = new Date(chartStart);
+  while (cursor <= todayStart) {
+    const key = isoDay(cursor);
+    dailyDMs.push({ date: key, count: bucketCounts.get(key) ?? 0 });
+    if (monthlyBuckets) {
+      cursor.setMonth(cursor.getMonth() + 1);
+    } else {
+      cursor.setDate(cursor.getDate() + 1);
+    }
   }
 
   const monthlyStatusSummary = summarizeDmStatuses(
@@ -211,6 +243,7 @@ export async function GET(request: NextRequest) {
       ctrThisMonth: calculateCtr(clicksThisMonth, dmsSentMonth),
       topKeywords,
       dailyDMs,
+      chartRange,
       recentLogs,
     },
   });

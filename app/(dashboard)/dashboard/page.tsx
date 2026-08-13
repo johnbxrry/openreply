@@ -8,9 +8,18 @@
 
 import { useEffect, useState } from "react";
 import AccountSelect, { type AccountOption } from "@/components/account-select";
+import DmChart from "@/components/dm-chart";
 import { Skeleton } from "@/components/skeleton";
 import StatCard from "@/components/stat-card";
 import StatusBadge from "@/components/status-badge";
+
+type ChartRange = "week" | "month" | "year";
+
+const RANGE_OPTIONS: { value: ChartRange; label: string; title: string }[] = [
+  { value: "week", label: "This week", title: "DMs (This Week)" },
+  { value: "month", label: "This month", title: "DMs (This Month)" },
+  { value: "year", label: "This year", title: "DMs (This Year)" },
+];
 
 interface DashboardStats {
   userName: string | null;
@@ -45,11 +54,15 @@ export default function DashboardPage() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedAccountId, setSelectedAccountId] = useState("all");
+  const [range, setRange] = useState<ChartRange>("week");
 
   useEffect(() => {
     const params = new URLSearchParams();
     if (selectedAccountId !== "all") {
       params.set("instagramAccountId", selectedAccountId);
+    }
+    if (range !== "week") {
+      params.set("range", range);
     }
 
     fetch(`/api/dashboard/stats${params.size ? `?${params}` : ""}`)
@@ -59,12 +72,20 @@ export default function DashboardPage() {
       })
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, [selectedAccountId]);
+  }, [selectedAccountId, range]);
 
   function handleAccountChange(accountId: string) {
     setLoading(true);
     setSelectedAccountId(accountId);
   }
+
+  function handleRangeChange(next: ChartRange) {
+    setLoading(true);
+    setRange(next);
+  }
+
+  const rangeOption =
+    RANGE_OPTIONS.find((o) => o.value === range) ?? RANGE_OPTIONS[0];
 
   if (loading) {
     // Mirrors the loaded layout: greeting, stat grid, chart/keywords/activity.
@@ -92,8 +113,6 @@ export default function DashboardPage() {
     );
   }
 
-  const maxDM = Math.max(...(stats?.dailyDMs.map((d) => d.count) ?? [1]), 1);
-
   const connectedCount = stats?.instagramAccounts.length ?? 0;
 
   return (
@@ -116,13 +135,31 @@ export default function DashboardPage() {
             </a>
           </p>
         </div>
-        {stats && stats.instagramAccounts.length > 1 && (
-          <AccountSelect
-            accounts={stats.instagramAccounts}
-            value={selectedAccountId}
-            onChange={handleAccountChange}
-          />
-        )}
+        <div className="flex flex-wrap items-end gap-x-4 gap-y-3">
+          <label className="flex flex-col gap-2 text-sm">
+            <span className="text-xs font-medium uppercase tracking-wide text-muted">
+              Range
+            </span>
+            <select
+              value={range}
+              onChange={(e) => handleRangeChange(e.target.value as ChartRange)}
+              className="border-0 bg-transparent py-2 pr-1 text-sm text-foreground outline-none"
+            >
+              {RANGE_OPTIONS.map((o) => (
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
+              ))}
+            </select>
+          </label>
+          {stats && stats.instagramAccounts.length > 1 && (
+            <AccountSelect
+              accounts={stats.instagramAccounts}
+              value={selectedAccountId}
+              onChange={handleAccountChange}
+            />
+          )}
+        </div>
       </div>
 
       {/* Stat Cards */}
@@ -140,24 +177,12 @@ export default function DashboardPage() {
 
       {/* Chart + Recent Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-6 gap-4 sm:gap-6">
-        {/* 7-Day Chart */}
+        {/* DM chart */}
         <div className="lg:col-span-3 panel rounded p-4 sm:p-6">
-          <h2 className="text-sm font-medium text-foreground mb-6">DMs — Last 7 Days</h2>
-          <div className="flex items-end gap-1.5 h-40 sm:gap-2">
-            {stats?.dailyDMs.map((day) => (
-              <div key={day.date} className="min-w-0 flex-1 flex flex-col items-center gap-2">
-                <span className="text-xs text-muted font-medium">{day.count}</span>
-                <div
-                  className="w-full rounded-sm bg-accent min-h-[4px]"
-                  style={{ height: `${Math.max((day.count / maxDM) * 100, 4)}%` }}
-                />
-                {/* Seven labels share a phone's width, so they must not wrap. */}
-                <span className="w-full truncate text-center text-[10px] text-muted">
-                  {day.date}
-                </span>
-              </div>
-            ))}
-          </div>
+          <h2 className="text-sm font-medium text-foreground mb-6">
+            {rangeOption.title}
+          </h2>
+          <DmChart data={stats?.dailyDMs ?? []} monthly={range === "year"} />
         </div>
 
         {/* Top Keywords */}
