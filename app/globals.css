@@ -1,25 +1,27 @@
 @import "tailwindcss";
 
-/* OpenReply — Design System
-   Light-only today; raw values live on :root so a future `.dark` block can
-   override them without touching @theme. Restraint everywhere except the
-   frosted accent buttons (.btn-primary) and shimmer skeletons (.skeleton),
-   which are the sanctioned uses of gradient/shadow/animation. */
+/* OpenReply — Design System (dark)
+   Palette mirrors the Aire design tokens in the Paper file "Aire Website":
+   near-black ground, warm off-white text, gray secondary, frosted blue
+   accent. Raw values live on :root so an alternate theme can override them
+   without touching @theme. Restraint everywhere except the frosted accent
+   buttons (.btn-primary) and shimmer skeletons (.skeleton), which are the
+   sanctioned uses of gradient/shadow/animation. */
 
 :root {
-  --background: #ffffff;
-  --foreground: #18181b;
-  --surface: #f7f7f8;
-  --surface-hover: #efeff1;
-  --border: #e4e4e7;
-  --border-hover: #d4d4d8;
-  --muted: #71717a;
-  --accent: #6485e6; /* periwinkle base */
-  --accent-hover: #5273de;
-  --accent-active: #4767d2; /* pressed state; consumed by .btn-primary only */
-  --success: #16a34a;
-  --error: #dc2626;
-  --warning: #d97706;
+  --background: #010101;
+  --foreground: #efefe4;
+  --surface: #181818;
+  --surface-hover: #222222;
+  --border: #222222;
+  --border-hover: #333333;
+  --muted: #909090;
+  --accent: #4c88f7;
+  --accent-hover: #2e66e8;
+  --accent-active: #2558cf; /* pressed state; consumed by .btn-primary only */
+  --success: #22c55e;
+  --error: #ef4444;
+  --warning: #f59e0b;
 }
 
 @theme inline {
@@ -35,12 +37,14 @@
   --color-success: var(--success);
   --color-error: var(--error);
   --color-warning: var(--warning);
-  --font-sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-sans:
+    var(--font-inter), Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-heading: "Helvetica Neue", Helvetica, Arial, sans-serif;
   --font-mono: ui-monospace, monospace;
 }
 
 html {
-  color-scheme: light;
+  color-scheme: dark;
 }
 
 body {
@@ -137,7 +141,7 @@ select:focus-visible {
     gap: 0.5rem;
     border-radius: 0.25rem;
     border: 1px solid var(--border);
-    background: var(--background);
+    background: var(--surface);
     font-weight: 500;
     color: var(--foreground);
     transition:
@@ -169,7 +173,7 @@ select:focus-visible {
     background: linear-gradient(
       90deg,
       transparent,
-      color-mix(in srgb, var(--background), transparent 40%),
+      color-mix(in srgb, var(--foreground), transparent 92%),
       transparent
     );
     animation: shimmer 1.6s ease-in-out infinite;

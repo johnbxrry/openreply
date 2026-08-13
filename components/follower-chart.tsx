@@ -31,10 +31,9 @@ export interface FollowerChartPoint {
 
 // Recharts sets these as SVG presentation attributes, where var() doesn't
 // resolve, so they mirror the :root tokens in globals.css by literal value.
-// (When dark mode ships, read them with getComputedStyle instead.)
-const SERIES_COLOR = "#6485e6"; // --accent
-const GRID_COLOR = "#e4e4e7";
-const AXIS_TEXT = "#71717a";
+const SERIES_COLOR = "#4c88f7"; // --accent
+const GRID_COLOR = "#222222"; // --border
+const AXIS_TEXT = "#909090"; // --muted
 
 function formatCompact(n: number): string {
   if (Math.abs(n) >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;

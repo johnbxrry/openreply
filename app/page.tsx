@@ -13,8 +13,8 @@ export const metadata: Metadata = {
 
 function AppWindow({ label, children }: { label: string; children: ReactNode }) {
   return (
-    <div className="overflow-hidden rounded-lg border border-border bg-background shadow-xl shadow-black/10">
-      <div className="flex items-center gap-2 border-b border-border bg-surface px-4 py-3">
+    <div className="overflow-hidden rounded-lg border border-border bg-surface shadow-2xl shadow-black/50">
+      <div className="flex items-center gap-2 border-b border-border bg-surface-hover px-4 py-3">
         <span className="h-2.5 w-2.5 rounded-full bg-border" />
         <span className="h-2.5 w-2.5 rounded-full bg-border" />
         <span className="h-2.5 w-2.5 rounded-full bg-border" />
@@ -27,7 +27,7 @@ function AppWindow({ label, children }: { label: string; children: ReactNode }) 
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded border border-border bg-surface p-4">
+    <div className="rounded border border-border bg-background/40 p-4">
       <p className="text-sm text-muted">{label}</p>
       <p className="mt-1 text-2xl font-semibold text-foreground">{value}</p>
     </div>
@@ -70,7 +70,7 @@ function OverviewPreview() {
         ))}
       </div>
 
-      <div className="mt-4 rounded border border-border bg-surface p-4">
+      <div className="mt-4 rounded border border-border bg-background/40 p-4">
         <div className="flex items-baseline justify-between">
           <p className="text-sm font-semibold text-foreground">
             Followers over time
@@ -98,7 +98,7 @@ function OverviewPreview() {
         </svg>
       </div>
 
-      <div className="mt-4 rounded border border-border bg-surface p-4">
+      <div className="mt-4 rounded border border-border bg-background/40 p-4">
         <p className="text-sm font-semibold text-foreground">Posts</p>
         <table className="mt-3 w-full text-sm">
           <thead>
@@ -127,7 +127,7 @@ function OverviewPreview() {
 
 function MatchedCommentCard() {
   return (
-    <div className="w-64 rounded-lg border border-border bg-surface p-4 shadow-xl shadow-black/10">
+    <div className="w-64 rounded-lg border border-border bg-surface p-4 shadow-2xl shadow-black/50">
       <p className="text-xs text-muted">New comment</p>
       <p className="mt-1 text-sm font-semibold text-foreground">@maya.co</p>
       <p className="mt-1 text-sm text-muted">LINK please</p>
@@ -149,34 +149,50 @@ export default function Home() {
       <header className="sticky top-0 z-40 border-b border-border bg-background">
         <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-5 sm:px-6 lg:px-8">
           <Link href="/" className="flex items-center gap-3" aria-label="OpenReply home">
-            <span className="text-lg font-bold text-foreground">OpenReply</span>
+            <span className="font-heading text-lg font-medium text-foreground">
+              OpenReply
+            </span>
           </Link>
 
-          <Link href="/login" className="btn-primary px-4 py-2 text-sm">
-            Log In
+          <Link
+            href="/login"
+            className="text-sm text-foreground transition hover:text-muted"
+          >
+            Access Your Portal <span aria-hidden="true">&rarr;</span>
           </Link>
         </div>
       </header>
 
-      <section className="mx-auto w-full max-w-3xl px-5 pt-16 text-center sm:px-6 sm:pt-24">
-        <h1 className="text-balance text-5xl font-black leading-[1.02] text-foreground sm:text-6xl">
-          Aire Company, Reply
+      <section className="mx-auto w-full max-w-6xl px-5 pt-20 sm:px-6 sm:pt-28 lg:px-8">
+        <h1 className="font-heading text-4xl font-medium leading-[1.08] tracking-[-0.02em] sm:text-5xl lg:text-[56px] lg:leading-[1.05]">
+          <span className="block text-foreground">every comment, answered</span>
+          <span className="block text-muted">the open-source engine for</span>
+          <span className="block text-muted">brands scaling Instagram DMs</span>
         </h1>
 
-        <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-muted">
+        <p className="mt-8 max-w-xl text-lg leading-7 text-muted">
           Open-sourced ManyChat. When someone comments your keyword on a post
           or reel, they get your DM a second later. Free, self-hosted, and
           built on the official Instagram API.
         </p>
 
-        <div className="mt-8 flex justify-center">
-          <Link href="/login" className="btn-primary px-6 py-3 text-sm">
-            Log In
+        <div className="mt-10 flex items-center gap-6">
+          <Link href="/login" className="btn-primary px-5 py-3 text-sm">
+            Access Your Portal
           </Link>
+          <a
+            href="#preview"
+            className="text-sm text-muted transition hover:text-foreground"
+          >
+            Learn More <span aria-hidden="true">&rarr;</span>
+          </a>
         </div>
       </section>
 
-      <section className="mx-auto w-full max-w-6xl px-5 pb-24 pt-14 sm:px-6 lg:px-8">
+      <section
+        id="preview"
+        className="mx-auto w-full max-w-6xl px-5 pb-24 pt-16 sm:px-6 sm:pt-20 lg:px-8"
+      >
         <div className="relative">
           <OverviewPreview />
           <div className="absolute -bottom-8 -left-6 hidden lg:block">
@@ -187,7 +203,7 @@ export default function Home() {
 
       <footer className="border-t border-border py-8">
         <div className="mx-auto flex w-full max-w-6xl items-center px-5 text-sm text-muted sm:px-6 lg:px-8">
-          <span className="font-semibold">OpenReply</span>
+          <span className="font-heading font-medium">OpenReply</span>
         </div>
       </footer>
     </main>
