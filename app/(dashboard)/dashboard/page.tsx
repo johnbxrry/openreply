@@ -276,14 +276,14 @@ export default function InstagramAnalyticsPage() {
         </p>
         <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
           <StatCard
-            label="AVERAGE views / post"
+            label="average views / post"
             value={formatNumber(
               analytics.avgViews === null ? null : Math.round(analytics.avgViews)
             )}
             trend={computeTrend(posts, "views")}
           />
           <StatCard
-            label="AVERAGE follower gain / post"
+            label="average follower gain / post"
             value={
               analytics.avgFollowerGain === null
                 ? "—"
@@ -292,14 +292,14 @@ export default function InstagramAnalyticsPage() {
             trend={analytics.followerTrend}
           />
           <StatCard
-            label="AVERAGE saves / post"
+            label="average saves / post"
             value={formatNumber(
               analytics.avgSaves === null ? null : Math.round(analytics.avgSaves)
             )}
             trend={computeTrend(posts, "saved")}
           />
           <StatCard
-            label="FOLLOWER CONVERSION"
+            label="follower conversion"
             value={
               analytics.conversion === null
                 ? "—"
@@ -308,7 +308,7 @@ export default function InstagramAnalyticsPage() {
             trend={analytics.followerTrend}
           />
           <StatCard
-            label="Engagement rate"
+            label="engagement rate"
             value={
               analytics.engagement === null
                 ? "—"
