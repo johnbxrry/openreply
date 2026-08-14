@@ -139,33 +139,46 @@ function daysAgo(base: Date, days: number): Date {
   return d;
 }
 
+/**
+ * Follower gain over the current `days`-day window vs the equal window
+ * before it (e.g. days=7 → this week vs last week).
+ */
+export function windowOverWindowGain(
+  history: FollowerHistoryPoint[],
+  days: number,
+  today: Date = new Date()
+): { current: number | null; previous: number | null; trend: Trend } {
+  const current = followerGainInWindow(
+    history,
+    isoDay(daysAgo(today, days - 1)),
+    isoDay(today)
+  );
+  const previous = followerGainInWindow(
+    history,
+    isoDay(daysAgo(today, days * 2 - 1)),
+    isoDay(daysAgo(today, days))
+  );
+  let trend: Trend = NEUTRAL_TREND;
+  if (current !== null && previous !== null) {
+    if (previous === 0) {
+      trend =
+        current === 0
+          ? { direction: "neutral", pct: 0 }
+          : { direction: current > 0 ? "up" : "down", pct: null };
+    } else {
+      trend = trendFromChange((current - previous) / Math.abs(previous));
+    }
+  }
+  return { current, previous, trend };
+}
+
 /** Follower gain this week ([today-6, today]) vs last week ([today-13, today-7]). */
 export function weekOverWeekGain(
   history: FollowerHistoryPoint[],
   today: Date = new Date()
 ): { thisWeek: number | null; lastWeek: number | null; trend: Trend } {
-  const thisWeek = followerGainInWindow(
-    history,
-    isoDay(daysAgo(today, 6)),
-    isoDay(today)
-  );
-  const lastWeek = followerGainInWindow(
-    history,
-    isoDay(daysAgo(today, 13)),
-    isoDay(daysAgo(today, 7))
-  );
-  let trend: Trend = NEUTRAL_TREND;
-  if (thisWeek !== null && lastWeek !== null) {
-    if (lastWeek === 0) {
-      trend =
-        thisWeek === 0
-          ? { direction: "neutral", pct: 0 }
-          : { direction: thisWeek > 0 ? "up" : "down", pct: null };
-    } else {
-      trend = trendFromChange((thisWeek - lastWeek) / Math.abs(lastWeek));
-    }
-  }
-  return { thisWeek, lastWeek, trend };
+  const { current, previous, trend } = windowOverWindowGain(history, 7, today);
+  return { thisWeek: current, lastWeek: previous, trend };
 }
 
 export interface WeekOverWeekPoint {

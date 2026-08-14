@@ -21,7 +21,7 @@ import {
   engagementTrend,
   followerGainInWindow,
   sparklineSeries,
-  weekOverWeekGain,
+  windowOverWindowGain,
   NEUTRAL_TREND,
   type MetricKey,
 } from "@/lib/analytics-trends";
@@ -46,6 +46,14 @@ const COUNT_OPTIONS = [
   { value: "all", label: "All time" },
 ];
 
+type PostWindow = "week" | "month" | "sixty";
+
+const POST_WINDOW_OPTIONS: { value: PostWindow; label: string; days: number }[] = [
+  { value: "week", label: "This week", days: 7 },
+  { value: "month", label: "This month", days: 30 },
+  { value: "sixty", label: "60 days", days: 60 },
+];
+
 const TILE_METRICS: { key: MetricKey; label: string }[] = [
   { key: "views", label: "Views" },
   { key: "reach", label: "Reach" },
@@ -61,6 +69,10 @@ export default function InstagramAnalyticsPage() {
   const [error, setError] = useState<string | null>(null);
   const [selectedAccountId, setSelectedAccountId] = useState("all");
   const [count, setCount] = useState("50");
+  const [postWindow, setPostWindow] = useState<PostWindow>("month");
+  // Reference "now" for window math, captured at fetch time so render-time
+  // computations stay pure (react-hooks/purity forbids Date.now() in render).
+  const [fetchedAt, setFetchedAt] = useState(0);
 
   useEffect(() => {
     const params = new URLSearchParams();
@@ -74,6 +86,7 @@ export default function InstagramAnalyticsPage() {
       .then((res) => {
         if (res.success) {
           setData(res.data);
+          setFetchedAt(Date.now());
           setError(null);
         } else {
           setError(res.error ?? "Failed to load analytics");
@@ -84,9 +97,10 @@ export default function InstagramAnalyticsPage() {
   }, [selectedAccountId, count]);
 
   const analytics = useMemo(() => {
-    if (!data) return null;
-    const { posts, followerHistory, totals } = data;
+    if (!data || fetchedAt === 0) return null;
+    const { posts, followerHistory } = data;
 
+    // The six tiles cover the whole selected post range.
     const tiles = TILE_METRICS.map(({ key, label }) => ({
       key,
       label,
@@ -94,28 +108,45 @@ export default function InstagramAnalyticsPage() {
       spark: sparklineSeries(posts, key),
     }));
 
-    // Posts arrive newest-first; the follower window spans back to the
-    // oldest selected post (bounded by how far snapshots actually reach).
-    const oldestDay = posts.at(-1)?.timestamp.slice(0, 10) ?? null;
-    const gain = oldestDay
-      ? followerGainInWindow(followerHistory, oldestDay)
-      : null;
-    const wow = weekOverWeekGain(followerHistory);
+    // Post analytics cards cover only the selected time window.
+    const option =
+      POST_WINDOW_OPTIONS.find((o) => o.value === postWindow) ??
+      POST_WINDOW_OPTIONS[1];
+    const now = new Date(fetchedAt);
+    const cutoffMs = fetchedAt - option.days * 86_400_000;
+    const cutoffIso = new Date(cutoffMs).toISOString().slice(0, 10);
+    const windowPosts = posts.filter(
+      (p) => Date.parse(p.timestamp) >= cutoffMs
+    );
+
+    const sum = (key: MetricKey) =>
+      windowPosts.reduce((total, p) => total + (p[key] ?? 0), 0);
+    const windowViews = sum("views");
+    const windowReach = sum("reach");
+    const windowInteractions =
+      sum("likes") + sum("comments") + sum("saved") + sum("shares");
+
+    const gain = followerGainInWindow(followerHistory, cutoffIso);
+    const wow = windowOverWindowGain(followerHistory, option.days, now);
 
     return {
       tiles,
-      avgViews: averageMetricPerPost(posts, "views"),
-      avgSaves: averageMetricPerPost(posts, "saved"),
+      avgViews: averageMetricPerPost(windowPosts, "views"),
+      avgSaves: averageMetricPerPost(windowPosts, "saved"),
       avgFollowerGain:
-        gain !== null && posts.length > 0 ? gain / posts.length : null,
+        gain !== null && windowPosts.length > 0
+          ? gain / windowPosts.length
+          : null,
       conversion:
-        gain !== null && totals.views > 0 ? (gain / totals.views) * 100 : null,
+        gain !== null && windowViews > 0 ? (gain / windowViews) * 100 : null,
       engagement:
-        totals.reach > 0 ? (totals.interactions / totals.reach) * 100 : null,
+        windowReach > 0 ? (windowInteractions / windowReach) * 100 : null,
       followerTrend: wow.trend,
-      engTrend: engagementTrend(posts),
+      viewsTrend: computeTrend(windowPosts, "views"),
+      savesTrend: computeTrend(windowPosts, "saved"),
+      engTrend: engagementTrend(windowPosts),
     };
-  }, [data]);
+  }, [data, fetchedAt, postWindow]);
 
   function handleAccountChange(accountId: string) {
     setLoading(true);
@@ -268,19 +299,35 @@ export default function InstagramAnalyticsPage() {
 
       {/* Per-post derived metrics */}
       <div>
-        <h2 className="text-lg font-normal tracking-[-0.02em] text-foreground">
-          post analytics
-        </h2>
-        <p className="mt-1 text-sm text-muted">
-          Granular analytics of your Instagram posts.
-        </p>
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h2 className="text-lg font-normal tracking-[-0.02em] text-foreground">
+              post analytics
+            </h2>
+            <p className="mt-1 text-sm text-muted">
+              Granular analytics of your Instagram posts.
+            </p>
+          </div>
+          <select
+            value={postWindow}
+            onChange={(e) => setPostWindow(e.target.value as PostWindow)}
+            className="rounded border border-border bg-transparent px-2 py-1.5 text-xs text-muted outline-none transition-colors hover:border-border-hover hover:text-foreground"
+            aria-label="Post analytics window"
+          >
+            {POST_WINDOW_OPTIONS.map((o) => (
+              <option key={o.value} value={o.value}>
+                {o.label}
+              </option>
+            ))}
+          </select>
+        </div>
         <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
           <StatCard
             label="average views / post"
             value={formatNumber(
               analytics.avgViews === null ? null : Math.round(analytics.avgViews)
             )}
-            trend={computeTrend(posts, "views")}
+            trend={analytics.viewsTrend}
           />
           <StatCard
             label="average follower gain / post"
@@ -296,7 +343,7 @@ export default function InstagramAnalyticsPage() {
             value={formatNumber(
               analytics.avgSaves === null ? null : Math.round(analytics.avgSaves)
             )}
-            trend={computeTrend(posts, "saved")}
+            trend={analytics.savesTrend}
           />
           <StatCard
             label="follower conversion"
