@@ -6,7 +6,6 @@ import {
   computeTrend,
   engagementTrend,
   followerGainInWindow,
-  paddedWindowSeries,
   sparklineSeries,
   weekOverWeekGain,
   type TrendPost,
@@ -211,29 +210,6 @@ describe("buildWindowSeries", () => {
     ]);
     const series = buildWindowSeries(history, 30, today);
     expect(series.map((p) => p.date)).toEqual(["2026-08-01", "2026-08-14"]);
-  });
-});
-
-describe("paddedWindowSeries", () => {
-  const today = new Date("2026-08-14T12:00:00");
-
-  it("emits one point per day across the whole window, null where unrecorded", () => {
-    const history = historyOf([
-      ["2026-08-10", 100],
-      ["2026-08-14", 120],
-    ]);
-    const series = paddedWindowSeries(history, 60, today);
-    expect(series).toHaveLength(60);
-    expect(series[0].date).toBe("2026-06-16");
-    expect(series[0].followers).toBeNull();
-    expect(series.at(-1)).toMatchObject({ date: "2026-08-14", followers: 120 });
-    expect(series.filter((p) => p.followers !== null)).toHaveLength(2);
-  });
-
-  it("differs in span between 30 and 60 day windows even with short history", () => {
-    const history = historyOf([["2026-08-14", 120]]);
-    expect(paddedWindowSeries(history, 30, today)).toHaveLength(30);
-    expect(paddedWindowSeries(history, 60, today)).toHaveLength(60);
   });
 });
 

@@ -225,37 +225,6 @@ export function buildWindowSeries(
   return history.filter((p) => p.date >= from);
 }
 
-export interface PaddedFollowerPoint {
-  date: string;
-  followers: number | null; // null = no snapshot that day
-  delta: number | null;
-}
-
-/**
- * One point for every day of the last `days` days, null where no snapshot
- * exists. Padding makes the chart's x-axis truly span the window, so a
- * 60-day view visibly differs from a 30-day one even when snapshots only
- * reach back a few weeks.
- */
-export function paddedWindowSeries(
-  history: FollowerHistoryPoint[],
-  days: number,
-  today: Date = new Date()
-): PaddedFollowerPoint[] {
-  const byDate = new Map(history.map((p) => [p.date, p]));
-  const series: PaddedFollowerPoint[] = [];
-  for (let i = days - 1; i >= 0; i--) {
-    const date = isoDay(daysAgo(today, i));
-    const point = byDate.get(date);
-    series.push({
-      date,
-      followers: point?.followers ?? null,
-      delta: point?.delta ?? null,
-    });
-  }
-  return series;
-}
-
 /**
  * Trend of engagement rate — Σ(likes+comments+saved+shares) / Σreach — for
  * the recent half of posts vs the older half.

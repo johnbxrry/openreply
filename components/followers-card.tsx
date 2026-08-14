@@ -19,10 +19,7 @@ import {
   YAxis,
 } from "recharts";
 import type { FollowerHistoryPoint } from "@/lib/reports/follower-history";
-import {
-  paddedWindowSeries,
-  type PaddedFollowerPoint,
-} from "@/lib/analytics-trends";
+import { buildWindowSeries } from "@/lib/analytics-trends";
 
 // Recharts sets these as SVG presentation attributes, where var() doesn't
 // resolve, so they mirror the :root tokens in globals.css by literal value.
@@ -30,18 +27,17 @@ const SERIES_COLOR = "#4c88f7"; // --accent
 const GRID_COLOR = "#222222"; // --border
 const AXIS_TEXT = "#909090"; // --muted
 
-type ChartWindow = "week" | "month" | "sixty" | "all";
+type ChartWindow = "week" | "month" | "sixty";
 
 const WINDOW_OPTIONS: {
   value: ChartWindow;
   label: string;
-  days: number | null; // null = all stored history
+  days: number;
   gainLabel: string;
 }[] = [
   { value: "week", label: "This week", days: 7, gainLabel: "this week" },
   { value: "month", label: "This month", days: 30, gainLabel: "this month" },
   { value: "sixty", label: "60 days", days: 60, gainLabel: "past 60 days" },
-  { value: "all", label: "All time", days: null, gainLabel: "all time" },
 ];
 
 function formatDay(iso: string): string {
@@ -65,11 +61,10 @@ function ChartTooltip({
   payload,
 }: {
   active?: boolean;
-  payload?: Array<{ payload: PaddedFollowerPoint }>;
+  payload?: Array<{ payload: FollowerHistoryPoint }>;
 }) {
   if (!active || !payload?.length) return null;
   const point = payload[0].payload;
-  if (point.followers === null) return null;
   return (
     <div className="rounded border border-border bg-surface px-3 py-2 text-xs shadow-lg">
       <p className="text-muted">{formatDay(point.date)}</p>
@@ -99,19 +94,13 @@ export default function FollowersCard({
     WINDOW_OPTIONS.find((o) => o.value === window) ?? WINDOW_OPTIONS[1];
 
   const current = followers ?? history.at(-1)?.followers ?? null;
-  // Fixed windows pad to their full span so the x-axis genuinely covers the
-  // window even when snapshots don't reach back that far; "All time" charts
-  // the entire stored history.
-  const series: PaddedFollowerPoint[] = useMemo(
-    () => (option.days === null ? history : paddedWindowSeries(history, option.days)),
+  const series = useMemo(
+    () => buildWindowSeries(history, option.days),
     [history, option.days]
   );
-  const recorded = series.filter(
-    (p): p is PaddedFollowerPoint & { followers: number } => p.followers !== null
-  );
   const gain =
-    recorded.length >= 2
-      ? recorded[recorded.length - 1].followers - recorded[0].followers
+    series.length >= 2
+      ? series[series.length - 1].followers - series[0].followers
       : null;
 
   return (
@@ -161,7 +150,7 @@ export default function FollowersCard({
         </div>
       </div>
 
-      {recorded.length < 2 && !showTable ? (
+      {series.length < 2 && !showTable ? (
         <div className="mt-6 rounded border border-border bg-surface/60 p-6 text-center">
           <p className="text-sm text-foreground">Collecting follower history</p>
           <p className="mt-1 text-sm text-muted">
