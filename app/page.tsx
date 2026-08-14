@@ -167,7 +167,9 @@ export default function Home() {
       </header>
 
       <section className="mx-auto w-full max-w-6xl px-5 pt-20 sm:px-6 sm:pt-28 lg:px-8">
-        <h1 className="text-4xl font-normal leading-[1.15] tracking-[-0.02em] sm:text-5xl lg:text-[56px] lg:leading-[1.0]">
+        {/* iOS ignores font-smoothing and draws SF heavier than desktop, so
+            regular (400) reads like medium on phones; 350 restores parity. */}
+        <h1 className="text-4xl font-[350] leading-[1.15] tracking-[-0.02em] sm:text-5xl sm:font-normal lg:text-[56px] lg:leading-[1.0]">
           <span className="block text-foreground">insta-analytics, made simple.</span>
           <span className="block text-muted">the open source engine for</span>
           <span className="block text-muted">instagram analytics and DMs.</span>
