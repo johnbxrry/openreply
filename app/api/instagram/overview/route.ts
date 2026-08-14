@@ -226,22 +226,9 @@ export async function GET(request: NextRequest) {
         { id: account.id, instagramId: account.instagramId },
         accessToken
       );
-      // Follower window: at least 90 days so the followers card's 60-day
-      // view is never starved by a short post range, extended to cover the
-      // oldest selected post (capped at a year) for range-aligned metrics.
-      const oldestTimestamp = posts.at(-1)?.timestamp;
-      const historyDays = oldestTimestamp
-        ? Math.min(
-            365,
-            Math.max(
-              90,
-              Math.ceil(
-                (Date.now() - Date.parse(oldestTimestamp)) / 86_400_000
-              ) + 1
-            )
-          )
-        : 90;
-      followerHistory = await getFollowerHistory(account.id, historyDays);
+      // Full stored history: snapshots are one row per day, so even years of
+      // data stay small, and the followers card's "All time" view needs it.
+      followerHistory = await getFollowerHistory(account.id, 3650);
     } catch (err) {
       console.warn(
         "[Instagram Overview] Follower history unavailable:",
