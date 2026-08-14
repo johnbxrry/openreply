@@ -169,13 +169,23 @@ export default function Home() {
       <section className="mx-auto w-full max-w-6xl px-5 pt-20 sm:px-6 sm:pt-28 lg:px-8">
         {/* iOS ignores font-smoothing and draws SF heavier than desktop, so
             regular (400) reads like medium on phones; 350 restores parity. */}
+        {/* On phones the three fixed lines wrap into jagged orphans, so the
+            heading flows as one paragraph below sm and keeps the three-line
+            structure from sm up. */}
         <h1 className="text-4xl font-[350] leading-[1.15] tracking-[-0.02em] sm:text-5xl sm:font-normal lg:text-[56px] lg:leading-[1.0]">
-          <span className="block text-foreground">insta-analytics, made simple.</span>
-          <span className="block text-muted">the open source engine for</span>
-          <span className="block text-muted">instagram analytics and DMs.</span>
+          <span className="text-foreground sm:block">
+            insta-analytics, made simple.
+          </span>{" "}
+          <span className="text-muted sm:block">
+            the open source engine for{" "}
+            <span className="sm:hidden">instagram analytics and DMs.</span>
+          </span>
+          <span className="hidden text-muted sm:block">
+            instagram analytics and DMs.
+          </span>
         </h1>
 
-        <p className="mt-8 max-w-xl text-lg leading-7 text-muted">
+        <p className="mt-8 max-w-xl text-lg font-[350] leading-7 text-muted sm:font-normal">
           Open-sourced ManyChat. When someone comments your keyword on a post
           or reel, they get your DM a second later. Free, self-hosted, and
           built on the official Instagram API.
