@@ -85,7 +85,7 @@ export default function ImportCampaignsPage() {
   return (
     <div className="max-w-2xl mx-auto space-y-6">
       <div>
-        <h1 className="text-lg font-medium">Import campaigns</h1>
+        <h1 className="text-lg font-semibold">Import campaigns</h1>
         <p className="text-sm text-muted mt-1">
           Paste a CSV with one row per campaign. Each row opens in the builder
           prefilled and editable, so you can review it and pick the reel before
@@ -111,7 +111,7 @@ export default function ImportCampaignsPage() {
 
       {accounts.length > 1 && (
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-foreground">
+          <label className="block text-sm font-semibold text-foreground">
             Instagram account
           </label>
           <AccountSelect
@@ -125,7 +125,7 @@ export default function ImportCampaignsPage() {
       )}
 
       <div className="space-y-2">
-        <label className="block text-sm font-medium text-foreground">CSV</label>
+        <label className="block text-sm font-semibold text-foreground">CSV</label>
         <textarea
           value={csv}
           onChange={(e) => setCsv(e.target.value)}
@@ -145,7 +145,7 @@ export default function ImportCampaignsPage() {
       <div className="flex items-center gap-4">
         <button
           onClick={startImport}
-          className="btn-primary px-5 py-2 text-sm"
+          className="btn-primary btn-compact"
         >
           Review and import
         </button>

@@ -323,7 +323,7 @@ export default function CampaignsPage() {
           )}
           <Link
             href="/campaigns/import"
-            className="flex-1 rounded border border-border px-4 py-2 text-center text-sm font-medium text-muted hover:text-foreground sm:flex-none"
+            className="btn-secondary btn-compact flex-1 sm:flex-none"
           >
             Import
           </Link>
@@ -353,7 +353,7 @@ export default function CampaignsPage() {
                 onClick={() => setStatusFilter(s)}
                 className={`rounded-md px-3 py-1.5 text-sm capitalize transition-colors ${
                   statusFilter === s
-                    ? "bg-background font-medium text-foreground ring-1 ring-accent/40"
+                    ? "bg-background font-semibold text-foreground ring-1 ring-accent/40"
                     : "text-muted hover:text-foreground"
                 }`}
               >
@@ -366,8 +366,8 @@ export default function CampaignsPage() {
 
       {/* Empty state */}
       {automations.length === 0 && (
-        <div className="panel rounded p-8 text-center sm:p-12">
-          <h3 className="text-lg font-medium mb-2">No campaigns yet</h3>
+        <div className="panel p-8 text-center sm:p-12">
+          <h3 className="text-lg font-semibold mb-2">No campaigns yet</h3>
           <p className="text-sm text-muted mb-6 max-w-sm mx-auto">
             Create your first comment-to-DM campaign to turn a post or reel into a measurable conversation flow.
           </p>
@@ -382,7 +382,7 @@ export default function CampaignsPage() {
 
       {/* No matches for the current filter */}
       {automations.length > 0 && filtered.length === 0 && (
-        <div className="panel rounded p-8 text-center text-sm text-muted">
+        <div className="panel p-8 text-center text-sm text-muted">
           No campaigns match your search.
         </div>
       )}
@@ -395,7 +395,7 @@ export default function CampaignsPage() {
           <div
             key={auto.id}
             onClick={() => router.push(`/campaigns/${auto.id}`)}
-            className="panel rounded p-4 hover:border-border-hover transition-all cursor-pointer"
+            className="panel p-4 hover:border-border-hover transition-all cursor-pointer"
           >
             {/* Wraps rather than compressing: on a phone the action buttons drop
                 to their own line instead of squeezing the campaign summary. */}
@@ -415,7 +415,7 @@ export default function CampaignsPage() {
                     <img
                       src={thumbnails[auto.postId]}
                       alt="Campaign reel"
-                      className="w-12 h-12 rounded object-cover border border-border hover:border-border-hover"
+                      className="w-12 h-12 rounded-2xl object-cover border border-border hover:border-border-hover"
                       onError={(e) => {
                         e.currentTarget.style.display = "none";
                       }}
@@ -441,23 +441,23 @@ export default function CampaignsPage() {
                   </a>
                 )
               ) : (
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded border border-border bg-surface-hover text-[10px] font-medium uppercase text-muted">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-border bg-surface-hover text-[10px] font-semibold uppercase text-muted">
                   IG
                 </div>
               )}
               <div className="min-w-[12rem] flex-1 self-center">
                 <div className="flex flex-wrap items-center gap-x-2 gap-y-2">
-                  <h3 className="text-sm font-medium truncate">{auto.name}</h3>
+                  <h3 className="text-sm font-semibold truncate">{auto.name}</h3>
                   {auto.keywords.map((kw) => (
                     <span
                       key={kw}
-                      className="shrink-0 rounded-full bg-accent/10 px-2 py-0.5 text-xs font-medium text-accent"
+                      className="shrink-0 rounded-full bg-accent/10 px-2 py-0.5 text-xs font-semibold text-accent"
                     >
                       {kw}
                     </span>
                   ))}
                   <span
-                    className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                    className={`text-xs px-2 py-0.5 rounded-full font-semibold ${
                       auto.isActive
                         ? "bg-success/10 text-success"
                         : "bg-muted/10 text-muted"
@@ -466,15 +466,15 @@ export default function CampaignsPage() {
                     {auto.isActive ? "Active" : "Paused"}
                   </span>
                   {auto.pendingNextReel && (
-                    <span className="shrink-0 rounded-full bg-amber-500/10 px-2 py-0.5 text-xs font-medium text-warning">
+                    <span className="shrink-0 rounded-full bg-amber-500/10 px-2 py-0.5 text-xs font-semibold text-warning">
                       Waiting for next reel
                     </span>
                   )}
                   <span className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted">
-                    <span className="font-medium text-foreground">
+                    <span className="font-semibold text-foreground">
                       {auto._count.dmLogs} runs
                     </span>
-                    <span className="font-medium text-foreground">
+                    <span className="font-semibold text-foreground">
                       {auto.analytics.ctr}% CTR
                     </span>
                     <span>{auto.analytics.sent} sent</span>
@@ -494,7 +494,7 @@ export default function CampaignsPage() {
                 {auto.postUrl && (
                   <button
                     onClick={() => void copyReelUrl(auto)}
-                    className="shrink-0 rounded-full border border-border px-2.5 py-1 text-xs font-medium text-muted transition-colors hover:border-border-hover hover:text-foreground"
+                    className="shrink-0 rounded-full border border-ring-c px-2.5 py-1 text-xs font-semibold text-muted transition-colors hover:bg-veil hover:text-foreground"
                   >
                     {copiedId === auto.id ? "Copied!" : "Copy URL"}
                   </button>

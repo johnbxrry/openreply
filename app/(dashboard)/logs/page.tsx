@@ -108,7 +108,7 @@ export default function LogsPage() {
               key={status}
               onClick={() => handleFilterChange(status)}
               className={`
-                px-3 py-1.5 rounded-lg text-xs font-medium transition-all
+                px-3 py-1.5 rounded-lg text-xs font-semibold transition-all
                 ${
                   statusFilter === status
                     ? "bg-accent/15 text-accent border border-accent/20"
@@ -130,19 +130,19 @@ export default function LogsPage() {
       </div>
 
       {/* Table */}
-      <div className="panel rounded overflow-hidden">
+      <div className="panel overflow-hidden">
         {/* Six columns don't fit a phone; the table keeps its width and scrolls
             horizontally inside the panel rather than crushing every cell. */}
         <div className="overflow-x-auto">
           <table className="w-full min-w-[760px] text-sm">
             <thead>
               <tr className="border-b border-border text-left">
-                <th className="px-4 py-4 text-xs font-medium text-muted uppercase tracking-wider sm:px-6">Commenter</th>
-                <th className="px-4 py-4 text-xs font-medium text-muted uppercase tracking-wider sm:px-6">Comment</th>
-                <th className="px-4 py-4 text-xs font-medium text-muted uppercase tracking-wider sm:px-6">Campaign</th>
-                <th className="px-4 py-4 text-xs font-medium text-muted uppercase tracking-wider sm:px-6">Account</th>
-                <th className="px-4 py-4 text-xs font-medium text-muted uppercase tracking-wider sm:px-6">Status</th>
-                <th className="px-4 py-4 text-xs font-medium text-muted uppercase tracking-wider sm:px-6">Time</th>
+                <th className="px-4 py-4 text-xs font-semibold text-muted uppercase tracking-wider sm:px-6">Commenter</th>
+                <th className="px-4 py-4 text-xs font-semibold text-muted uppercase tracking-wider sm:px-6">Comment</th>
+                <th className="px-4 py-4 text-xs font-semibold text-muted uppercase tracking-wider sm:px-6">Campaign</th>
+                <th className="px-4 py-4 text-xs font-semibold text-muted uppercase tracking-wider sm:px-6">Account</th>
+                <th className="px-4 py-4 text-xs font-semibold text-muted uppercase tracking-wider sm:px-6">Status</th>
+                <th className="px-4 py-4 text-xs font-semibold text-muted uppercase tracking-wider sm:px-6">Time</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
@@ -168,7 +168,7 @@ export default function LogsPage() {
                 logs.map((log) => (
                   <tr key={log.id} className="hover:bg-surface-hover/50 transition-colors">
                     <td className="px-4 py-4 sm:px-6">
-                      <span className="font-medium text-foreground">
+                      <span className="font-semibold text-foreground">
                         @{log.commenterName ?? log.commenterId.slice(0, 8)}
                       </span>
                     </td>
@@ -213,7 +213,7 @@ export default function LogsPage() {
                   setLoading(true);
                   setPage(page - 1);
                 }}
-                className="px-3 py-1.5 rounded-lg text-xs font-medium text-muted border border-border hover:text-foreground hover:border-border-hover transition-all disabled:opacity-30 disabled:pointer-events-none"
+                className="px-3 py-1.5 rounded-lg text-xs font-semibold text-muted border border-border hover:text-foreground hover:border-border-hover transition-all disabled:opacity-30 disabled:pointer-events-none"
               >
                 Previous
               </button>
@@ -226,7 +226,7 @@ export default function LogsPage() {
                   setLoading(true);
                   setPage(page + 1);
                 }}
-                className="px-3 py-1.5 rounded-lg text-xs font-medium text-muted border border-border hover:text-foreground hover:border-border-hover transition-all disabled:opacity-30 disabled:pointer-events-none"
+                className="px-3 py-1.5 rounded-lg text-xs font-semibold text-muted border border-border hover:text-foreground hover:border-border-hover transition-all disabled:opacity-30 disabled:pointer-events-none"
               >
                 Next
               </button>

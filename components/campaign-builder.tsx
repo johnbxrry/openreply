@@ -71,7 +71,7 @@ function Section({
 }) {
   return (
     <div className="space-y-3">
-      <h2 className="text-sm font-medium text-foreground">{title}</h2>
+      <h2 className="text-sm font-semibold text-foreground">{title}</h2>
       {children}
     </div>
   );
@@ -549,7 +549,7 @@ export default function CampaignBuilder({ mode, campaignId }: CampaignBuilderPro
 
   if (notFound) {
     return (
-      <div className="panel rounded p-8 text-center">
+      <div className="panel p-8 text-center">
         <p className="text-sm text-muted">Campaign not found.</p>
         <button
           onClick={() => router.push("/campaigns")}
@@ -565,7 +565,7 @@ export default function CampaignBuilder({ mode, campaignId }: CampaignBuilderPro
     <div className="space-y-6">
       {importQueue && (
         <div className="rounded border border-accent/30 bg-accent/5 px-4 py-3 text-sm">
-          <span className="font-medium text-foreground">
+          <span className="font-semibold text-foreground">
             Importing {importTotal - importQueue.length + 1} of {importTotal}.
           </span>{" "}
           <span className="text-muted">
@@ -580,11 +580,11 @@ export default function CampaignBuilder({ mode, campaignId }: CampaignBuilderPro
         <div className="flex min-w-0 items-center gap-3">
           {mode === "edit" ? (
             <>
-              <span className="truncate text-sm font-medium text-foreground">
+              <span className="truncate text-sm font-semibold text-foreground">
                 {name || "Untitled campaign"}
               </span>
               <span
-                className={`rounded px-2 py-0.5 text-xs font-medium ${
+                className={`rounded px-2 py-0.5 text-xs font-semibold ${
                   isActive ? "bg-success/15 text-success" : "bg-muted/15 text-muted"
                 }`}
               >
@@ -601,7 +601,7 @@ export default function CampaignBuilder({ mode, campaignId }: CampaignBuilderPro
               type="button"
               onClick={skipRow}
               disabled={saving}
-              className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-muted hover:text-foreground disabled:opacity-50"
+              className="rounded-lg border border-border px-4 py-2 text-sm font-semibold text-muted hover:text-foreground disabled:opacity-50"
             >
               {importQueue.length > 1 ? "Skip" : "Skip & finish"}
             </button>
@@ -612,7 +612,7 @@ export default function CampaignBuilder({ mode, campaignId }: CampaignBuilderPro
                 type="button"
                 onClick={() => handleSubmit(false)}
                 disabled={saving}
-                className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-muted hover:text-foreground disabled:opacity-50"
+                className="rounded-lg border border-border px-4 py-2 text-sm font-semibold text-muted hover:text-foreground disabled:opacity-50"
               >
                 Stop
               </button>
@@ -621,7 +621,7 @@ export default function CampaignBuilder({ mode, campaignId }: CampaignBuilderPro
                 type="button"
                 onClick={() => handleSubmit(true)}
                 disabled={saving}
-                className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-muted hover:text-foreground disabled:opacity-50"
+                className="rounded-lg border border-border px-4 py-2 text-sm font-semibold text-muted hover:text-foreground disabled:opacity-50"
               >
                 Go Live
               </button>
@@ -630,7 +630,7 @@ export default function CampaignBuilder({ mode, campaignId }: CampaignBuilderPro
             type="button"
             onClick={() => handleSubmit(mode === "new" ? true : isActive)}
             disabled={saving}
-            className="btn-primary px-5 py-2 text-sm"
+            className="btn-primary btn-compact"
           >
             {saving ? "Saving…" : mode === "new" ? "Go Live" : "Save changes"}
           </button>
@@ -647,7 +647,7 @@ export default function CampaignBuilder({ mode, campaignId }: CampaignBuilderPro
         )}
 
         <div className="space-y-3">
-          <label className="text-sm font-medium text-foreground">
+          <label className="text-sm font-semibold text-foreground">
             Campaign name{" "}
             <span className="font-normal text-muted">(optional)</span>
           </label>
@@ -794,7 +794,7 @@ export default function CampaignBuilder({ mode, campaignId }: CampaignBuilderPro
                   onClick={() =>
                     setPublicReplyMessages((prev) => [...prev, ""])
                   }
-                  className="text-xs font-medium text-accent hover:underline"
+                  className="text-xs font-semibold text-accent hover:underline"
                 >
                   + Add another reply
                 </button>

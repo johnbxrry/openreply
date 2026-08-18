@@ -5,20 +5,15 @@
  *
  * Scaled-down version of the analytics area chart for stat tiles: smooth
  * monotone curve, gradient fill, and a hover tooltip showing date + value.
- * Colors are literal hex mirroring the :root tokens (SVG presentation
- * attributes can't resolve var()): --success #22c55e, --muted #909090,
- * --error #ef4444.
+ * Colors are literal hex per theme (SVG presentation attributes can't
+ * resolve var()) — see lib/chart-theme.ts.
  */
 
 import { useId } from "react";
 import { Area, AreaChart, Tooltip } from "recharts";
 import type { SparklinePoint, TrendDirection } from "@/lib/analytics-trends";
-
-const STROKE: Record<TrendDirection, string> = {
-  up: "#22c55e",
-  neutral: "#909090",
-  down: "#ef4444",
-};
+import { useTheme } from "@/components/theme-provider";
+import { CHART_COLORS, TREND_COLORS } from "@/lib/chart-theme";
 
 function formatDay(iso: string): string {
   const d = new Date(`${iso}T00:00:00`);
@@ -38,7 +33,7 @@ function SparkTooltip({
   return (
     <div className="rounded border border-border bg-surface px-2 py-1 text-[11px] shadow-lg whitespace-nowrap">
       <span className="text-muted">{formatDay(point.date)}</span>{" "}
-      <span className="font-medium text-foreground">
+      <span className="font-semibold text-foreground">
         {point.value.toLocaleString()}
       </span>
     </div>
@@ -59,8 +54,10 @@ export default function Sparkline({
   className?: string;
 }) {
   const gradientId = useId();
+  const { theme } = useTheme();
   if (points.length < 2) return null;
-  const color = STROKE[direction];
+  const color = TREND_COLORS[theme][direction];
+  const dotRing = CHART_COLORS[theme].dotRing;
 
   return (
     // overflow-visible lets the hover dot render past the tiny viewBox edge
@@ -97,7 +94,7 @@ export default function Sparkline({
           strokeWidth={1.5}
           fill={`url(#${gradientId})`}
           isAnimationActive={false}
-          activeDot={{ r: 3, fill: color, stroke: "#ffffff", strokeWidth: 1.5 }}
+          activeDot={{ r: 3, fill: color, stroke: dotRing, strokeWidth: 1.5 }}
         />
       </AreaChart>
     </div>

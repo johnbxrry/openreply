@@ -24,13 +24,13 @@ export default function AccountSelect({
 }: AccountSelectProps) {
   return (
     <label className="flex flex-col gap-2 text-sm">
-      <span className="text-xs font-medium uppercase tracking-wide text-muted">
+      <span className="text-xs font-semibold uppercase tracking-wide text-faint">
         {label}
       </span>
       <select
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="min-w-52 rounded-xl border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none transition-colors focus:border-accent/40"
+        className="min-w-52 rounded-full border border-ring-c bg-surface-hover px-4 py-2 text-sm font-semibold text-foreground outline-none transition-colors focus:border-accent/40"
       >
         {includeAll && <option value="all">All accounts</option>}
         {accounts.map((account) => (

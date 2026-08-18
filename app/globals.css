@@ -1,31 +1,67 @@
 @import "tailwindcss";
 
-/* OpenReply — Design System (dark)
-   Palette mirrors the Aire design tokens in the Paper file "Aire Website":
-   near-black ground, warm off-white text, gray secondary, frosted blue
-   accent. Raw values live on :root so an alternate theme can override them
-   without touching @theme. Restraint everywhere except the frosted accent
-   buttons (.btn-primary) and shimmer skeletons (.skeleton), which are the
-   sanctioned uses of gradient/shadow/animation. */
+/* OpenReply — Aire design system (cobalt exploration)
+   Tokens mirror the Paper file "Aire Design Exploration": light runs
+   paper/bone/mist grounds with cobalt as the single accent; dark runs
+   blue-cast near-blacks with sky carrying every CTA. Raw values live on
+   :root (dark, the default) and are overridden wholesale by
+   [data-theme="light"], so the theme flips without touching @theme. */
 
 :root {
-  --background: #010101;
-  --foreground: #efefe4;
-  --surface: #181818;
-  --surface-hover: #222222;
-  --border: #222222;
-  --border-hover: #333333;
-  --muted: #909090;
-  --accent: #4c88f7;
-  --accent-hover: #2e66e8;
-  --accent-active: #2558cf;
-  --button: #efefe4; /* Paper --color-button: primary actions are off-white */
-  --button-hover: #e0e0d2;
-  --button-active: #d2d2c2;
-  --button-text: #181818; /* Paper --color-button-text */
+  /* Fixed brand colors — identical in both themes */
+  --cobalt: #0166ff;
+  --navy: #012e73;
+  --sky: #99c7ff;
+  --sky-soft: #bcd7ff;
+  --ice: #e0edff;
+  --coral: #ffa8ad;
+
+  /* Dark theme (default) */
+  --background: #0f1218;
+  --foreground: #f1f4f9;
+  --surface: #20242d;
+  --surface-hover: #272b35;
+  --border: #1b1f27;
+  --border-hover: rgb(255 255 255 / 20%);
+  --ring-c: rgb(255 255 255 / 20%);
+  --veil: rgb(255 255 255 / 10%);
+  --accent-tint: rgb(153 199 255 / 14%);
+  --muted: #c6cdd9;
+  --faint: #c6cdd9;
+  --accent: var(--sky);
+  --accent-hover: var(--sky-soft);
+  --button: var(--sky);
+  --button-hover: var(--sky-soft);
+  --button-active: color-mix(in srgb, var(--sky), #0f1218 12%);
+  --button-text: #0f1218;
   --success: #22c55e;
-  --error: #ef4444;
+  --error: var(--coral);
   --warning: #f59e0b;
+  color-scheme: dark;
+}
+
+[data-theme="light"] {
+  --background: #ffffff;
+  --foreground: #0c0e12;
+  --surface: #f0f3f7;
+  --surface-hover: #e4eaf2;
+  --border: #e4eaf2;
+  --border-hover: rgb(1 102 255 / 16%);
+  --ring-c: rgb(1 102 255 / 16%);
+  --veil: rgb(12 14 18 / 6%);
+  --accent-tint: rgb(1 102 255 / 10%);
+  --muted: #363b45;
+  --faint: #949ba8;
+  --accent: var(--cobalt);
+  --accent-hover: color-mix(in srgb, var(--cobalt), var(--navy) 30%);
+  --button: var(--cobalt);
+  --button-hover: color-mix(in srgb, var(--cobalt), var(--navy) 30%);
+  --button-active: color-mix(in srgb, var(--cobalt), var(--navy) 45%);
+  --button-text: #ffffff;
+  --success: #15803d;
+  --error: #dc2626; /* coral fails as text on paper; it stays a fill color */
+  --warning: #b45309;
+  color-scheme: light;
 }
 
 @theme inline {
@@ -36,21 +72,47 @@
   --color-border: var(--border);
   --color-border-hover: var(--border-hover);
   --color-muted: var(--muted);
+  --color-faint: var(--faint);
   --color-accent: var(--accent);
   --color-accent-hover: var(--accent-hover);
+  --color-accent-tint: var(--accent-tint);
   --color-success: var(--success);
   --color-error: var(--error);
   --color-warning: var(--warning);
-  /* Matches the Paper file's "System Sans-Serif": the platform UI face
-     (SF Pro on macOS/iOS, Segoe on Windows). Weights used: 400 and 500 only. */
-  --font-sans:
-    system-ui, -apple-system, "SF Pro Text", "Segoe UI", Helvetica, Arial,
-    sans-serif;
-  --font-mono: ui-monospace, monospace;
-}
+  --color-cobalt: var(--cobalt);
+  --color-navy: var(--navy);
+  --color-sky: var(--sky);
+  --color-sky-soft: var(--sky-soft);
+  --color-ice: var(--ice);
+  --color-coral: var(--coral);
+  --color-veil: var(--veil);
+  --color-ring-c: var(--ring-c);
+  --color-button: var(--button);
+  --color-button-text: var(--button-text);
 
-html {
-  color-scheme: dark;
+  /* Shape — the Aire radius ladder. Remapping Tailwind's own tokens restyles
+     every existing `rounded`/`rounded-lg` call site; small elements clamp
+     toward pills, which is the intended look. */
+  --radius-card: 28.66px;
+  --radius-card-lg: 38.21px;
+  --radius: var(--radius-card);
+  --radius-lg: var(--radius-card);
+
+  /* Inter everywhere below display; NaN Drum Narrow for display only.
+     Both variables come from next/font in app/layout.tsx. */
+  --font-sans:
+    var(--font-inter), system-ui, -apple-system, "Segoe UI", Helvetica, Arial,
+    sans-serif;
+  --font-display: var(--font-drum), var(--font-inter), system-ui, sans-serif;
+  --font-mono: ui-monospace, monospace;
+
+  --text-display: clamp(2.75rem, 7.5vw, 5.6875rem);
+  --text-display--line-height: 0.85;
+  --text-display--letter-spacing: -0.02em;
+  --text-lg: 1.25rem;
+  --text-lg--line-height: 1.75rem;
+  --text-lg--letter-spacing: 0.1px;
+  --text-base--letter-spacing: 0.08px;
 }
 
 body {
@@ -84,70 +146,118 @@ select:focus-visible {
   }
 }
 
-/* Panel — flat container. Replaces .glass / .glass-strong. */
+/* Panel — flat card at the Aire card radius. */
 .panel {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
 }
 
 @layer components {
-  /* Frosted primary action. Sizing (padding, text size, width) stays at the
-     call site; this owns color, radius, gradient, and shadows. Everything
-     derives from var(--accent) so a token change recolors the whole set. */
-  /* Primary action, straight from the Paper file: off-white fill, dark
-     text, 16px medium, 8px/14px padding, 4px radius (--radius-sm). */
+  /* Aire buttons: full pills, 1px border matching own fill, 16 SemiBold at
+     -0.176px tracking. Medium (48px) is the default; add .btn-compact (40)
+     inside product UI cards or .btn-sm (32) for nav chips and dense rows. */
   .btn-primary {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.3125rem;
-    border-radius: 0.25rem;
-    font-weight: 500;
+    gap: 0.5rem;
+    border-radius: 9999px;
+    padding: 11px 24px;
+    font-size: 1rem;
+    line-height: 1.5rem;
+    font-weight: 600;
+    letter-spacing: -0.176px;
     color: var(--button-text);
     background-color: var(--button);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--button);
     transition:
       background-color 150ms,
-      box-shadow 150ms;
+      border-color 150ms;
   }
   .btn-primary:hover {
     background-color: var(--button-hover);
+    border-color: var(--button-hover);
   }
   .btn-primary:active {
     background-color: var(--button-active);
-    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.15);
+    border-color: var(--button-active);
   }
   .btn-primary:disabled,
   .btn-primary[aria-disabled="true"] {
     opacity: 0.5;
     pointer-events: none;
-    box-shadow: none;
-    background-image: none;
   }
 
-  /* Quiet bordered action — codifies the existing border-border pattern. */
+  /* Outlined pill — quiet sibling of .btn-primary. */
   .btn-secondary {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    border-radius: 0.25rem;
-    border: 1px solid var(--border);
-    background: var(--surface);
-    font-weight: 500;
+    border-radius: 9999px;
+    padding: 11px 24px;
+    font-size: 1rem;
+    line-height: 1.5rem;
+    font-weight: 600;
+    letter-spacing: -0.176px;
     color: var(--foreground);
+    background: transparent;
+    border: 1px solid var(--ring-c);
     transition:
       border-color 150ms,
       background-color 150ms,
       color 150ms;
   }
   .btn-secondary:hover {
-    border-color: var(--border-hover);
-    background: var(--surface-hover);
+    background: var(--veil);
   }
   .btn-secondary:disabled {
     opacity: 0.5;
     pointer-events: none;
+  }
+
+  .btn-compact {
+    padding: 7px 20px;
+  }
+  .btn-sm {
+    padding: 5px 14px;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
+
+  /* Hero CTA on the fixed cobalt ground — identical in both themes. */
+  .btn-hero {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 9999px;
+    padding: 11px 24px;
+    font-size: 1rem;
+    line-height: 1.5rem;
+    font-weight: 600;
+    letter-spacing: -0.176px;
+    color: #0c0e12;
+    background-color: var(--ice);
+    border: 1px solid var(--ice);
+    transition:
+      background-color 150ms,
+      border-color 150ms;
+  }
+  .btn-hero:hover {
+    background-color: #ffffff;
+    border-color: #ffffff;
+  }
+
+  /* Display type — always uppercase via CSS; source copy stays sentence case
+     so the decision isn't baked into the content. */
+  .type-display {
+    font-family: var(--font-display);
+    font-weight: 800;
+    text-transform: uppercase;
+    line-height: 0.85;
+    letter-spacing: -0.02em;
   }
 
   /* Scrollable region with the scrollbar hidden (still scrolls). */
@@ -163,7 +273,7 @@ select:focus-visible {
   .skeleton {
     position: relative;
     overflow: hidden;
-    border-radius: 0.25rem;
+    border-radius: 9999px;
     background: var(--surface-hover);
   }
   .skeleton::after {

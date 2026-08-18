@@ -9,15 +9,16 @@ export const metadata: Metadata = {
 };
 
 /* Static, faithful copy of the real Overview screen, built in the app's own
-   design tokens so what visitors see is what the app looks like. */
+   design tokens so what visitors see is what the app looks like. The hero's
+   card-lg frame owns the outer shape, so AppWindow draws no border of its own. */
 
 function AppWindow({ label, children }: { label: string; children: ReactNode }) {
   return (
-    <div className="overflow-hidden rounded-lg border border-border bg-surface shadow-2xl shadow-black/50">
+    <div className="bg-surface">
       <div className="flex items-center gap-2 border-b border-border bg-surface-hover px-4 py-3">
-        <span className="h-2.5 w-2.5 rounded-full bg-border" />
-        <span className="h-2.5 w-2.5 rounded-full bg-border" />
-        <span className="h-2.5 w-2.5 rounded-full bg-border" />
+        <span className="h-2.5 w-2.5 rounded-full bg-veil" />
+        <span className="h-2.5 w-2.5 rounded-full bg-veil" />
+        <span className="h-2.5 w-2.5 rounded-full bg-veil" />
         <span className="ml-2 text-xs text-muted">{label}</span>
       </div>
       <div className="p-5">{children}</div>
@@ -25,22 +26,58 @@ function AppWindow({ label, children }: { label: string; children: ReactNode }) 
   );
 }
 
-function Stat({ label, value }: { label: string; value: string }) {
+function Stat({
+  label,
+  value,
+  trend,
+  up,
+  spark,
+}: {
+  label: string;
+  value: string;
+  trend: string;
+  up: boolean | null;
+  spark: string;
+}) {
+  const tone =
+    up === null ? "text-muted" : up ? "text-success" : "text-error";
   return (
-    <div className="rounded border border-border bg-background/40 p-4">
-      <p className="text-sm text-muted">{label}</p>
-      <p className="mt-1 text-2xl font-medium text-foreground">{value}</p>
+    <div className="rounded-2xl border border-border bg-background/60 p-4">
+      <p className="text-sm font-semibold text-faint">{label}</p>
+      <p className="mt-1 text-2xl font-semibold text-foreground">{value}</p>
+      <div className="mt-2 flex items-center justify-between gap-2">
+        <p className={`text-xs font-semibold ${tone}`}>
+          <span aria-hidden="true">{up === null ? "—" : up ? "▲" : "▼"}</span>{" "}
+          {trend}
+        </p>
+        <svg
+          viewBox="0 0 100 28"
+          preserveAspectRatio="none"
+          className={`h-5 w-14 shrink-0 ${tone}`}
+          aria-hidden="true"
+        >
+          <polyline
+            points={spark}
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            vectorEffect="non-scaling-stroke"
+          />
+        </svg>
+      </div>
     </div>
   );
 }
 
-const overviewStats = [
-  ["Views", "847.2K"],
-  ["Reach", "612.4K"],
-  ["Likes", "38.1K"],
-  ["Comments", "4,204"],
-  ["Saved", "9,712"],
-  ["Shares", "2,340"],
+const overviewStats: [string, string, string, boolean | null, string][] = [
+  ["Views", "847.2K", "12.4%", true, "0,22 20,18 40,20 60,12 80,8 100,4"],
+  ["Reach", "612.4K", "8.1%", true, "0,20 20,21 40,16 60,17 80,10 100,6"],
+  ["Likes", "38.1K", "-4.2%", false, "0,8 20,10 40,9 60,14 80,13 100,18"],
+  ["Comments", "4,204", "0.0%", null, "0,14 20,12 40,15 60,12 80,15 100,13"],
+  ["Saved", "9,712", "21.0%", true, "0,24 20,20 40,21 60,14 80,9 100,3"],
+  ["Shares", "2,340", "-6.8%", false, "0,6 20,9 40,8 60,13 80,12 100,17"],
 ];
 
 const overviewPosts = [
@@ -54,25 +91,32 @@ function OverviewPreview() {
     <AppWindow label="app / overview">
       <div className="flex items-end justify-between">
         <div>
-          <h3 className="text-base font-medium text-foreground">Overview</h3>
+          <h3 className="text-base font-semibold text-foreground">Overview</h3>
           <p className="mt-1 text-xs text-muted">
             Recent — 24 posts from @studio.store
           </p>
         </div>
-        <span className="rounded border border-border px-2 py-1 text-xs text-muted">
+        <span className="rounded-full bg-veil px-3 py-1 text-xs font-semibold text-muted">
           Last 50
         </span>
       </div>
 
       <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-        {overviewStats.map(([label, value]) => (
-          <Stat key={label} label={label} value={value} />
+        {overviewStats.map(([label, value, trend, up, spark]) => (
+          <Stat
+            key={label}
+            label={label}
+            value={value}
+            trend={trend}
+            up={up}
+            spark={spark}
+          />
         ))}
       </div>
 
-      <div className="mt-4 rounded border border-border bg-background/40 p-4">
+      <div className="mt-4 rounded-2xl border border-border bg-background/60 p-4">
         <div className="flex items-baseline justify-between">
-          <p className="text-sm font-medium text-foreground">
+          <p className="text-sm font-semibold text-foreground">
             Followers over time
           </p>
           <p className="text-xs text-muted">
@@ -98,15 +142,15 @@ function OverviewPreview() {
         </svg>
       </div>
 
-      <div className="mt-4 rounded border border-border bg-background/40 p-4">
-        <p className="text-sm font-medium text-foreground">Posts</p>
+      <div className="mt-4 rounded-2xl border border-border bg-background/60 p-4">
+        <p className="text-sm font-semibold text-foreground">Posts</p>
         <table className="mt-3 w-full text-sm">
           <thead>
-            <tr className="border-b border-border text-left text-[11px] uppercase tracking-wide text-muted">
-              <th className="pb-2 pr-3 font-medium">Post</th>
-              <th className="pb-2 px-3 text-right font-medium">Views</th>
-              <th className="pb-2 px-3 text-right font-medium">Likes</th>
-              <th className="pb-2 pl-3 text-right font-medium">Date</th>
+            <tr className="border-b border-border text-left text-[11px] uppercase tracking-wide text-faint">
+              <th className="pb-2 pr-3 font-semibold">Post</th>
+              <th className="pb-2 px-3 text-right font-semibold">Views</th>
+              <th className="pb-2 px-3 text-right font-semibold">Likes</th>
+              <th className="pb-2 pl-3 text-right font-semibold">Date</th>
             </tr>
           </thead>
           <tbody>
@@ -127,15 +171,15 @@ function OverviewPreview() {
 
 function MatchedCommentCard() {
   return (
-    <div className="w-64 rounded-lg border border-border bg-surface p-4 shadow-2xl shadow-black/50">
+    <div className="w-64 rounded-lg border border-border bg-surface p-5 shadow-2xl shadow-black/50">
       <p className="text-xs text-muted">New comment</p>
-      <p className="mt-1 text-sm font-medium text-foreground">@maya.co</p>
+      <p className="mt-1 text-sm font-semibold text-foreground">@maya.co</p>
       <p className="mt-1 text-sm text-muted">LINK please</p>
       <div className="mt-3 border-t border-border pt-3">
         <p className="text-xs text-muted">
           Matched <span className="text-accent">GUIDE</span>
         </p>
-        <p className="mt-1 text-sm font-medium text-success">
+        <p className="mt-1 text-sm font-semibold text-success">
           Queued private reply
         </p>
       </div>
@@ -146,84 +190,80 @@ function MatchedCommentCard() {
 export default function Home() {
   return (
     <main className="min-h-screen bg-background text-foreground">
-      <header className="sticky top-0 z-40 border-b border-border bg-background">
-        <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-5 sm:px-6 lg:px-8">
-          <Link href="/" className="flex items-center gap-3" aria-label="OpenReply home">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/openreply-mark.svg"
-              alt="OpenReply"
-              className="h-8 w-auto opacity-90"
-            />
-          </Link>
+      {/* Cobalt hero block — header, hero copy, and media card all sit on it.
+          The ground fades into the page background behind the card's lower
+          half, so the card straddles cobalt and page ground per the Aire
+          hero reference. */}
+      <div className="relative isolate overflow-hidden bg-cobalt">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-[42%] bg-gradient-to-b from-transparent to-background"
+        />
 
-          <Link
-            href="/login"
-            className="text-lg font-normal text-foreground/80 transition hover:text-foreground"
-          >
-            access your portal <span aria-hidden="true">&rarr;</span>
-          </Link>
-        </div>
-      </header>
+        <header className="relative">
+          <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-5 sm:px-6 lg:px-8">
+            <Link
+              href="/"
+              className="flex items-center gap-3"
+              aria-label="Aire home"
+            >
+              {/* Wordmark in the brand display face (uppercased by the class). */}
+              <span className="type-display text-2xl text-ice">Aire</span>
+            </Link>
 
-      <section className="mx-auto w-full max-w-6xl px-5 pt-20 sm:px-6 sm:pt-28 lg:px-8">
-        {/* iOS ignores font-smoothing and draws SF heavier than desktop, so
-            regular (400) reads like medium on phones; 350 restores parity. */}
-        {/* On phones the three fixed lines wrap into jagged orphans, so the
-            heading flows as one paragraph below sm and keeps the three-line
-            structure from sm up. */}
-        <h1 className="text-4xl font-[350] leading-[1.15] tracking-[-0.02em] sm:text-5xl sm:font-normal lg:text-[56px] lg:leading-[1.0]">
-          <span className="text-foreground sm:block">
-            insta-analytics, made simple.
-          </span>{" "}
-          <span className="text-muted sm:block">
-            the open source engine for{" "}
-            <span className="sm:hidden">instagram analytics and DMs.</span>
-          </span>
-          <span className="hidden text-muted sm:block">
-            instagram analytics and DMs.
-          </span>
-        </h1>
-
-        <p className="mt-8 max-w-xl text-lg font-[350] leading-7 text-muted sm:font-normal">
-          Open-sourced ManyChat. When someone comments your keyword on a post
-          or reel, they get your DM a second later. Free, self-hosted, and
-          built on the official Instagram API.
-        </p>
-
-        <div className="mt-10 flex items-center gap-6">
-          <Link href="/login" className="btn-primary px-3.5 py-2 text-base">
-            access your portal
-          </Link>
-          <a
-            href="#preview"
-            className="text-lg font-normal text-foreground/80 transition hover:text-foreground"
-          >
-            learn more <span aria-hidden="true">&rarr;</span>
-          </a>
-        </div>
-      </section>
-
-      <section
-        id="preview"
-        className="mx-auto w-full max-w-6xl px-5 pb-24 pt-16 sm:px-6 sm:pt-20 lg:px-8"
-      >
-        <div className="relative">
-          <OverviewPreview />
-          <div className="absolute -bottom-8 -left-6 hidden lg:block">
-            <MatchedCommentCard />
+            <Link
+              href="/login"
+              className="text-base font-semibold text-ice underline decoration-ice/50 underline-offset-4 transition hover:decoration-ice"
+            >
+              Access your portal <span aria-hidden="true">&rarr;</span>
+            </Link>
           </div>
-        </div>
-      </section>
+        </header>
+
+        <section className="relative mx-auto w-full max-w-6xl px-5 pt-14 text-center sm:px-6 sm:pt-20 lg:px-8">
+          {/* Copy stays sentence case in source; .type-display uppercases it. */}
+          <h1 className="type-display text-display text-ice">
+            <span className="block">turn comments</span>
+            <span className="block">into conversations.</span>
+          </h1>
+
+          <p className="mx-auto mt-8 max-w-xl text-lg font-semibold text-white">
+            OpenReply is the open-source engine for Instagram analytics and
+            DMs. Someone comments your keyword — they get your DM a second
+            later. Free, self-hosted, official API.
+          </p>
+
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-6">
+            <Link href="/login" className="btn-hero sm:min-w-[200px]">
+              Access your portal
+            </Link>
+            <a
+              href="#preview"
+              className="text-base font-semibold text-ice underline decoration-ice/50 underline-offset-4 transition hover:decoration-ice"
+            >
+              Learn more <span aria-hidden="true">&rarr;</span>
+            </a>
+          </div>
+        </section>
+
+        <section
+          id="preview"
+          className="relative mx-auto w-full max-w-6xl px-5 pb-24 pt-14 sm:px-6 sm:pt-20 lg:px-8"
+        >
+          <div className="relative">
+            <div className="overflow-hidden rounded-card-lg shadow-2xl shadow-black/25 ring-1 ring-black/10">
+              <OverviewPreview />
+            </div>
+            <div className="absolute -bottom-8 -left-6 hidden lg:block">
+              <MatchedCommentCard />
+            </div>
+          </div>
+        </section>
+      </div>
 
       <footer className="border-t border-border py-8">
         <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-5 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/openreply-mark.svg"
-            alt="OpenReply"
-            className="h-8 w-auto opacity-90"
-          />
+          <span className="type-display text-2xl text-foreground">Aire</span>
           <nav className="flex items-center gap-[25px] text-sm text-muted">
             <Link href="/privacy" className="transition hover:text-foreground">
               privacy policy

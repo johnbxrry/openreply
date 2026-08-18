@@ -24,7 +24,7 @@ export default function PublicSiteHeader({ active }: PublicSiteHeaderProps) {
             <Link
               key={link.key}
               href={link.href}
-              className={`text-sm font-medium transition ${
+              className={`text-sm font-semibold transition ${
                 active === link.key ? "text-white" : "text-zinc-400 hover:text-white"
               }`}
             >

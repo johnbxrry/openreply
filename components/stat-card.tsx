@@ -30,12 +30,12 @@ interface StatCardProps {
 
 export default function StatCard({ label, value, trend, spark }: StatCardProps) {
   return (
-    <div className="panel rounded p-4">
-      <p className="text-sm text-muted">{label}</p>
-      <p className="text-2xl font-medium text-foreground mt-1">{value}</p>
+    <div className="panel p-5">
+      <p className="text-sm font-semibold text-faint">{label}</p>
+      <p className="text-2xl font-semibold text-foreground mt-1">{value}</p>
       {trend && (
         <div className="mt-2 flex items-center justify-between gap-2">
-          <span className={`text-xs ${COLORS[trend.direction]}`}>
+          <span className={`text-xs font-semibold ${COLORS[trend.direction]}`}>
             {ARROWS[trend.direction]} {formatPct(trend.pct)}
           </span>
           {spark && spark.length > 1 && (

@@ -137,7 +137,7 @@ export default function CampaignDetailPage() {
   }
   if (notFound || !campaign) {
     return (
-      <div className="panel rounded p-8 text-center">
+      <div className="panel p-8 text-center">
         <p className="text-sm text-muted">Campaign not found.</p>
         <button
           onClick={() => router.push("/campaigns")}
@@ -187,9 +187,9 @@ export default function CampaignDetailPage() {
           </Link>
         </div>
         <div className="flex items-center gap-2">
-          <h1 className="truncate text-lg font-medium">{campaign.name}</h1>
+          <h1 className="truncate text-lg font-semibold">{campaign.name}</h1>
           <span
-            className={`shrink-0 rounded px-2 py-0.5 text-xs font-medium ${
+            className={`shrink-0 rounded px-2 py-0.5 text-xs font-semibold ${
               campaign.isActive
                 ? "bg-success/10 text-success"
                 : "bg-muted/10 text-muted"
@@ -333,9 +333,9 @@ export default function CampaignDetailPage() {
         {tab === "insights" && (
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
             {metrics.map((m) => (
-              <div key={m.label} className="panel rounded p-4">
+              <div key={m.label} className="panel p-4">
                 <p className="text-sm text-muted">{m.label}</p>
-                <p className="mt-1 text-2xl font-medium text-foreground">
+                <p className="mt-1 text-2xl font-semibold text-foreground">
                   {m.value}
                 </p>
               </div>
@@ -389,7 +389,7 @@ export default function CampaignDetailPage() {
 function Summary({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="space-y-2">
-      <h2 className="text-sm font-medium text-foreground">{title}</h2>
+      <h2 className="text-sm font-semibold text-foreground">{title}</h2>
       {children}
     </div>
   );
@@ -415,7 +415,7 @@ function TabButton({
   return (
     <button
       onClick={onClick}
-      className={`border-b-2 pb-2 text-sm font-medium ${
+      className={`border-b-2 pb-2 text-sm font-semibold ${
         active
           ? "border-accent text-foreground"
           : "border-transparent text-muted hover:text-foreground"
