@@ -370,7 +370,7 @@ function DmScreen({
               <Avatar url={avatarUrl} size={24} />
               <div className="max-w-[80%] overflow-hidden rounded-2xl rounded-bl-md bg-zinc-800">
                 <p className="whitespace-pre-wrap px-3 py-2 text-sm">{openingDmMessage || "Your opening message…"}</p>
-                <div className="mx-1.5 mb-1.5 rounded-xl bg-zinc-700 px-4 py-1.5 text-center text-sm font-medium text-white">
+                <div className="mx-1.5 mb-1.5 rounded-xl bg-zinc-700 px-4 py-1.5 text-center text-sm font-semibold text-white">
                   {openingDmButtonLabel || "Button label"}
                 </div>
               </div>
@@ -391,7 +391,7 @@ function DmScreen({
                   {followPromptMessage ||
                     "quick favor before i send your link. i don't make any money from this, it's free. if you want to support me, just don't unfollow after, and star the repo on github if it helps you. tap the button once you're following and i'll send it over"}
                 </p>
-                <div className="mx-1.5 mb-1.5 rounded-xl bg-zinc-700 px-4 py-1.5 text-center text-sm font-medium text-white">
+                <div className="mx-1.5 mb-1.5 rounded-xl bg-zinc-700 px-4 py-1.5 text-center text-sm font-semibold text-white">
                   {followPromptButtonLabel || "i'm following"}
                 </div>
               </div>
@@ -425,11 +425,11 @@ function DmScreen({
                 )}
                 {showCard && (
                   <>
-                    <div className="mx-1.5 mb-1.5 rounded-xl bg-zinc-700 px-4 py-1.5 text-center text-sm font-medium text-white">
+                    <div className="mx-1.5 mb-1.5 rounded-xl bg-zinc-700 px-4 py-1.5 text-center text-sm font-semibold text-white">
                       {linkButtonLabel || "Open link"}
                     </div>
                     {hasSecondLink && (
-                      <div className="mx-1.5 mb-1.5 rounded-xl bg-zinc-700 px-4 py-1.5 text-center text-sm font-medium text-white">
+                      <div className="mx-1.5 mb-1.5 rounded-xl bg-zinc-700 px-4 py-1.5 text-center text-sm font-semibold text-white">
                         {secondLinkButtonLabel || "Open link"}
                       </div>
                     )}
@@ -461,7 +461,7 @@ function DmScreen({
       </div>
 
       <div className="flex items-center gap-2 px-3 py-3">
-        <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-accent text-white">
+        <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-accent text-button-text">
           {Ico.camera("h-4 w-4")}
         </span>
         <div className="flex-1 rounded-full bg-zinc-800 px-3 py-2 text-xs text-zinc-500">Message…</div>
@@ -562,7 +562,7 @@ export default function CampaignPreview(props: CampaignPreviewProps) {
             onClick={() => onTabChange(t.key)}
             className={`rounded-full px-4 py-1.5 text-sm transition-colors ${
               activeTab === t.key
-                ? "bg-background font-medium text-foreground ring-1 ring-accent/40"
+                ? "bg-background font-semibold text-foreground ring-1 ring-accent/40"
                 : "text-muted hover:text-foreground"
             }`}
           >

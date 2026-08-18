@@ -93,7 +93,7 @@ export default function OverviewPage() {
 
   if (error) {
     return (
-      <div className="panel rounded p-8 text-center">
+      <div className="panel p-8 text-center">
         <p className="text-sm text-error">{error}</p>
         {error.includes("connect") && (
           <a
@@ -116,7 +116,7 @@ export default function OverviewPage() {
     <div className="space-y-8">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div className="min-w-0">
-          <h1 className="text-lg font-medium text-foreground">Overview</h1>
+          <h1 className="text-lg font-semibold text-foreground">Overview</h1>
           <p className="text-sm text-muted mt-1">
             {data.requestedCount === "all" ? "All-time" : "Recent"} —{" "}
             {totals.posts} post{totals.posts === 1 ? "" : "s"} from @
@@ -133,13 +133,13 @@ export default function OverviewPage() {
         </div>
         <div className="flex flex-wrap items-end gap-x-4 gap-y-3">
           <label className="flex flex-col gap-2 text-sm">
-            <span className="text-xs font-medium uppercase tracking-wide text-muted">
+            <span className="text-xs font-semibold uppercase tracking-wide text-faint">
               Range
             </span>
             <select
               value={count}
               onChange={(e) => handleCountChange(e.target.value)}
-              className="border-0 bg-transparent py-2 pr-1 text-sm text-foreground outline-none"
+              className="rounded-full border-0 bg-veil px-4 py-2 text-sm font-semibold text-foreground outline-none"
             >
               {COUNT_OPTIONS.map((o) => (
                 <option key={o.value} value={o.value}>
@@ -163,7 +163,7 @@ export default function OverviewPage() {
       </div>
 
       {!insightsAvailable && (
-        <div className="panel rounded p-4 border border-border">
+        <div className="panel p-4 border border-border">
           <p className="text-sm text-foreground">
             Views, reach, saved and shares need the insights permission.
           </p>
@@ -194,8 +194,8 @@ export default function OverviewPage() {
       <FollowerChart data={followerHistory} followers={followers} />
 
       {/* Per-post table */}
-      <div className="panel rounded p-4 sm:p-6">
-        <h2 className="text-sm font-medium text-foreground mb-4">Posts</h2>
+      <div className="panel p-5 sm:p-7">
+        <h2 className="text-sm font-semibold text-foreground mb-4">Posts</h2>
         {posts.length === 0 ? (
           <p className="text-sm text-muted py-8 text-center">No posts found</p>
         ) : (
@@ -204,15 +204,15 @@ export default function OverviewPage() {
           <div className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
             <table className="w-full min-w-[720px] text-sm">
               <thead>
-                <tr className="text-left text-xs uppercase tracking-wide text-muted border-b border-border">
-                  <th className="py-2 pr-4 font-medium">Post</th>
-                  <th className="py-2 px-3 font-medium text-right">Views</th>
-                  <th className="py-2 px-3 font-medium text-right">Reach</th>
-                  <th className="py-2 px-3 font-medium text-right">Likes</th>
-                  <th className="py-2 px-3 font-medium text-right">Comments</th>
-                  <th className="py-2 px-3 font-medium text-right">Saved</th>
-                  <th className="py-2 px-3 font-medium text-right">Shares</th>
-                  <th className="py-2 pl-3 font-medium text-right">Date</th>
+                <tr className="text-left text-xs uppercase tracking-wide text-faint border-b border-border">
+                  <th className="py-2 pr-4 font-semibold">Post</th>
+                  <th className="py-2 px-3 font-semibold text-right">Views</th>
+                  <th className="py-2 px-3 font-semibold text-right">Reach</th>
+                  <th className="py-2 px-3 font-semibold text-right">Likes</th>
+                  <th className="py-2 px-3 font-semibold text-right">Comments</th>
+                  <th className="py-2 px-3 font-semibold text-right">Saved</th>
+                  <th className="py-2 px-3 font-semibold text-right">Shares</th>
+                  <th className="py-2 pl-3 font-semibold text-right">Date</th>
                 </tr>
               </thead>
               <tbody>

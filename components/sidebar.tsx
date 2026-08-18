@@ -44,20 +44,16 @@ export default function Sidebar({
 
       <aside
         className={`
-          fixed top-0 left-0 z-50 h-dvh w-64 max-w-[85vw] shrink-0 bg-surface border-r border-border flex flex-col
+          fixed top-0 left-0 z-50 h-dvh w-64 max-w-[85vw] shrink-0 bg-background border-r border-border flex flex-col
           transition-transform duration-200 ease-out
           lg:h-full lg:translate-x-0 lg:static lg:z-auto
           ${isOpen ? "translate-x-0" : "-translate-x-full"}
         `}
       >
-        <div className="px-6 py-5 border-b border-border">
-          <Link href="/dashboard" aria-label="OpenReply dashboard">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/openreply-mark.svg"
-              alt="OpenReply"
-              className="h-8 w-auto opacity-90"
-            />
+        <div className="px-6 py-5">
+          <Link href="/dashboard" aria-label="Aire dashboard">
+            {/* Wordmark in the brand display face (uppercased by the class). */}
+            <span className="type-display text-2xl text-foreground">Aire</span>
           </Link>
         </div>
 
@@ -72,11 +68,11 @@ export default function Sidebar({
                 onClick={onClose}
                 aria-current={isActive ? "page" : undefined}
                 className={`
-                  block px-3 py-2.5 rounded text-sm
+                  block rounded-full px-4 py-2.5 text-base font-semibold
                   ${
                     isActive
-                      ? "bg-surface-hover text-foreground font-medium"
-                      : "text-muted hover:text-foreground hover:bg-surface-hover"
+                      ? "bg-accent-tint text-foreground"
+                      : "text-muted hover:bg-veil hover:text-foreground"
                   }
                 `}
               >
@@ -87,8 +83,10 @@ export default function Sidebar({
         </nav>
 
         <div className="px-5 py-4 border-t border-border">
-          <p className="text-sm text-foreground truncate">{workspaceName}</p>
-          <p className="text-xs text-muted">Self-hosted</p>
+          <p className="text-sm font-semibold text-foreground truncate">
+            {workspaceName}
+          </p>
+          <p className="text-xs text-faint">Self-hosted</p>
         </div>
       </aside>
     </>

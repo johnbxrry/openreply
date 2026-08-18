@@ -260,7 +260,7 @@ export default function InboxPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-end justify-between gap-4">
-        <h1 className="text-lg font-medium text-foreground">Inbox</h1>
+        <h1 className="text-lg font-semibold text-foreground">Inbox</h1>
         {accounts.length > 1 && (
           <AccountSelect
             accounts={accounts}
@@ -271,7 +271,7 @@ export default function InboxPage() {
         )}
       </div>
 
-      <div className="grid h-[calc(100dvh-11rem)] grid-cols-1 overflow-hidden rounded border border-border sm:grid-cols-[300px_1fr]">
+      <div className="grid h-[calc(100dvh-11rem)] grid-cols-1 overflow-hidden rounded-card border border-border bg-surface sm:grid-cols-[300px_1fr]">
         {/* Conversation list. On mobile it takes the full pane and is hidden
             once a thread is open (ManyChat-style); on sm+ it is always shown. */}
         <div
@@ -279,7 +279,7 @@ export default function InboxPage() {
             active ? "hidden" : "flex"
           }`}
         >
-          <div className="shrink-0 border-b border-border px-4 py-3 text-sm font-medium text-foreground">
+          <div className="shrink-0 border-b border-border px-4 py-3 text-sm font-semibold text-foreground">
             Conversations
           </div>
           <div className="no-scrollbar min-h-0 flex-1 overflow-y-auto">
@@ -306,7 +306,7 @@ export default function InboxPage() {
                     }`}
                   >
                     <div className="flex items-baseline justify-between gap-2">
-                      <span className="truncate text-sm font-medium text-foreground">
+                      <span className="truncate text-sm font-semibold text-foreground">
                         @{c.contact.username ?? "unknown"}
                       </span>
                       <span className="shrink-0 text-[11px] text-muted">
@@ -337,7 +337,7 @@ export default function InboxPage() {
             </div>
           ) : (
             <>
-              <div className="flex shrink-0 items-center gap-2 border-b border-border px-4 py-3 text-sm font-medium text-foreground">
+              <div className="flex shrink-0 items-center gap-2 border-b border-border px-4 py-3 text-sm font-semibold text-foreground">
                 <button
                   type="button"
                   onClick={() => setActiveId(null)}
@@ -367,16 +367,16 @@ export default function InboxPage() {
                       className={`flex ${m.fromMe ? "justify-end" : "justify-start"}`}
                     >
                       <div
-                        className={`max-w-[75%] rounded-lg px-3 py-2 text-sm ${
+                        className={`max-w-[75%] rounded-lg px-3.5 py-2 text-sm ${
                           m.fromMe
-                            ? "bg-accent text-white"
-                            : "bg-surface text-foreground border border-border"
+                            ? "bg-accent text-button-text"
+                            : "bg-surface-hover text-foreground"
                         }`}
                       >
                         <p className="whitespace-pre-wrap break-words">{m.text}</p>
                         <p
                           className={`mt-1 text-[10px] ${
-                            m.fromMe ? "text-white/70" : "text-muted"
+                            m.fromMe ? "opacity-70" : "text-muted"
                           }`}
                         >
                           {formatTime(m.createdTime)}
@@ -398,13 +398,13 @@ export default function InboxPage() {
                     onKeyDown={handleKeyDown}
                     rows={1}
                     placeholder="Write a reply…  (Enter to send, Shift+Enter for a new line)"
-                    className="max-h-32 min-h-[40px] flex-1 resize-none rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground placeholder:text-muted focus:border-accent/40 focus:outline-none"
+                    className="max-h-32 min-h-[40px] flex-1 resize-none rounded-lg border border-ring-c bg-surface-hover px-3.5 py-2 text-sm text-foreground placeholder:text-muted focus:border-accent/40 focus:outline-none"
                   />
                   <button
                     type="button"
                     onClick={() => void handleSend()}
                     disabled={sending || !draft.trim()}
-                    className="btn-primary px-4 py-2 text-sm"
+                    className="btn-primary btn-compact"
                   >
                     {sending ? "Sending…" : "Send"}
                   </button>

@@ -116,7 +116,7 @@ export default function DashboardPage() {
       {/* Greeting header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="text-2xl font-medium text-foreground sm:text-3xl">
+          <h1 className="text-2xl font-semibold text-foreground sm:text-3xl">
             Hello, {stats?.userName ?? "there"}!
           </h1>
           <p className="mt-1 text-sm text-muted">
@@ -133,13 +133,13 @@ export default function DashboardPage() {
         </div>
         <div className="flex flex-wrap items-end gap-x-4 gap-y-3">
           <label className="flex flex-col gap-2 text-sm">
-            <span className="text-xs font-medium uppercase tracking-wide text-muted">
+            <span className="text-xs font-semibold uppercase tracking-wide text-faint">
               Range
             </span>
             <select
               value={range}
               onChange={(e) => handleRangeChange(e.target.value as ChartRange)}
-              className="border-0 bg-transparent py-2 pr-1 text-sm text-foreground outline-none"
+              className="rounded-full border-0 bg-veil px-4 py-2 text-sm font-semibold text-foreground outline-none"
             >
               {RANGE_OPTIONS.map((o) => (
                 <option key={o.value} value={o.value}>
@@ -174,23 +174,23 @@ export default function DashboardPage() {
       {/* Chart + Recent Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-6 gap-4 sm:gap-6">
         {/* DM chart */}
-        <div className="lg:col-span-3 panel rounded p-4 sm:p-6">
-          <h2 className="text-sm font-medium text-foreground mb-6">
+        <div className="lg:col-span-3 panel p-5 sm:p-7">
+          <h2 className="text-sm font-semibold text-foreground mb-6">
             {rangeOption.title}
           </h2>
           <DmChart data={stats?.dailyDMs ?? []} monthly={range === "year"} />
         </div>
 
         {/* Top Keywords */}
-        <div className="lg:col-span-1 panel rounded p-4 sm:p-6">
-          <h2 className="text-sm font-medium text-foreground mb-4">Top Keywords</h2>
+        <div className="lg:col-span-1 panel p-5 sm:p-7">
+          <h2 className="text-sm font-semibold text-foreground mb-4">Top Keywords</h2>
           <div className="space-y-3">
             {stats?.topKeywords.length === 0 && (
               <p className="text-sm text-muted py-8">No keyword matches yet</p>
             )}
             {stats?.topKeywords.map((keyword) => (
               <div key={keyword.keyword} className="flex items-center justify-between gap-3">
-                <span className="truncate text-sm font-medium text-foreground">
+                <span className="truncate text-sm font-semibold text-foreground">
                   {keyword.keyword}
                 </span>
                 <span className="text-xs text-muted">{keyword.count}</span>
@@ -200,8 +200,8 @@ export default function DashboardPage() {
         </div>
 
         {/* Recent Activity */}
-        <div className="lg:col-span-2 panel rounded p-4 sm:p-6">
-          <h2 className="text-sm font-medium text-foreground mb-4">Recent Activity</h2>
+        <div className="lg:col-span-2 panel p-5 sm:p-7">
+          <h2 className="text-sm font-semibold text-foreground mb-4">Recent Activity</h2>
           <div className="no-scrollbar space-y-3 max-h-60 overflow-y-auto">
             {stats?.recentLogs.length === 0 && (
               <p className="text-sm text-muted text-center py-8">No activity yet</p>
@@ -212,7 +212,7 @@ export default function DashboardPage() {
                 className="flex items-center justify-between gap-3 py-2 border-b border-border last:border-0"
               >
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-medium text-foreground truncate">
+                  <p className="text-sm font-semibold text-foreground truncate">
                     @{log.commenterName ?? "unknown"}
                   </p>
                   <p className="text-xs text-muted truncate">

@@ -17,17 +17,13 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { useTheme } from "@/components/theme-provider";
+import { CHART_COLORS } from "@/lib/chart-theme";
 
 export interface DmChartPoint {
   date: string; // ISO yyyy-mm-dd
   count: number;
 }
-
-// Recharts sets these as SVG presentation attributes, where var() doesn't
-// resolve, so they mirror the :root tokens in globals.css by literal value.
-const SERIES_COLOR = "#4c88f7"; // --accent
-const GRID_COLOR = "#222222"; // --border
-const AXIS_TEXT = "#909090"; // --muted
 
 function parseDay(iso: string): Date | null {
   const d = new Date(`${iso}T00:00:00`);
@@ -69,7 +65,7 @@ function ChartTooltip({
   return (
     <div className="rounded border border-border bg-surface px-3 py-2 text-xs shadow-lg">
       <p className="text-muted">{formatFull(point.date, monthly)}</p>
-      <p className="mt-1 font-medium text-foreground">
+      <p className="mt-1 font-semibold text-foreground">
         {point.count.toLocaleString()} DM{point.count === 1 ? "" : "s"}
       </p>
     </div>
@@ -83,26 +79,29 @@ export default function DmChart({
   data: DmChartPoint[];
   monthly?: boolean;
 }) {
+  const { theme } = useTheme();
+  const colors = CHART_COLORS[theme];
+
   return (
     <div className="h-48 sm:h-56">
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={data} margin={{ top: 8, right: 16, bottom: 0, left: 0 }}>
           <CartesianGrid
             vertical={false}
-            stroke={GRID_COLOR}
+            stroke={colors.grid}
             strokeDasharray="3 3"
           />
           <XAxis
             dataKey="date"
             tickFormatter={(iso: string) => formatTick(iso, monthly)}
-            tick={{ fill: AXIS_TEXT, fontSize: 12 }}
-            stroke={GRID_COLOR}
+            tick={{ fill: colors.axis, fontSize: 12 }}
+            stroke={colors.grid}
             tickLine={false}
             minTickGap={24}
           />
           <YAxis
-            tick={{ fill: AXIS_TEXT, fontSize: 12 }}
-            stroke={GRID_COLOR}
+            tick={{ fill: colors.axis, fontSize: 12 }}
+            stroke={colors.grid}
             tickLine={false}
             width={40}
             allowDecimals={false}
@@ -110,18 +109,18 @@ export default function DmChart({
           />
           <Tooltip
             content={<ChartTooltip monthly={monthly} />}
-            cursor={{ stroke: GRID_COLOR, strokeWidth: 1 }}
+            cursor={{ stroke: colors.grid, strokeWidth: 1 }}
           />
           <Line
             type="monotone"
             dataKey="count"
-            stroke={SERIES_COLOR}
+            stroke={colors.series}
             strokeWidth={2}
             dot={false}
             activeDot={{
               r: 4,
-              fill: SERIES_COLOR,
-              stroke: "#ffffff",
+              fill: colors.series,
+              stroke: colors.dotRing,
               strokeWidth: 2,
             }}
             isAnimationActive={false}

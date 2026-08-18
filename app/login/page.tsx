@@ -35,7 +35,7 @@ export default async function LoginPage({
     <div className="min-h-screen flex items-center justify-center px-6">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-medium text-foreground">
+          <h1 className="text-2xl font-semibold text-foreground">
             OpenReply
           </h1>
           <p className="text-muted text-sm leading-relaxed mt-2">
@@ -45,13 +45,13 @@ export default async function LoginPage({
           </p>
         </div>
 
-        <div className="panel rounded p-8 shadow-black/40">
+        <div className="panel p-8 shadow-black/40">
           {selectedTemplate && !checkEmail && (
             <div className="mb-5 border border-accent/20 bg-accent/10 p-4">
-              <p className="text-xs font-medium uppercase tracking-wide text-accent">
+              <p className="text-xs font-semibold uppercase tracking-wide text-accent">
                 Template selected
               </p>
-              <p className="mt-2 text-sm font-medium text-foreground">
+              <p className="mt-2 text-sm font-semibold text-foreground">
                 {selectedTemplate.title}
               </p>
             </div>
@@ -59,7 +59,7 @@ export default async function LoginPage({
 
           {checkEmail ? (
             <div className="text-center py-4">
-              <h2 className="text-lg font-medium mb-2">Check your email</h2>
+              <h2 className="text-lg font-semibold mb-2">Check your email</h2>
               <p className="text-sm text-muted">
                 We sent you a secure sign-in link. Open it on this device to
                 continue.
@@ -70,7 +70,7 @@ export default async function LoginPage({
               <div className="space-y-2">
                 <label
                   htmlFor="email"
-                  className="block text-sm font-medium text-foreground"
+                  className="block text-sm font-semibold text-foreground"
                 >
                   Work email
                 </label>
@@ -87,7 +87,7 @@ export default async function LoginPage({
 
               <button
                 type="submit"
-                className="btn-primary w-full gap-2 px-6 py-3.5 text-sm"
+                className="btn-primary w-full gap-2"
               >
                 Email me a magic link
               </button>

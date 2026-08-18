@@ -37,7 +37,7 @@ export default function InvitationAcceptCard({
     return (
       <a
         href="/login"
-        className="btn-primary px-5 py-3 text-sm"
+        className="btn-primary btn-compact"
       >
         Sign in to accept
       </a>
@@ -50,7 +50,7 @@ export default function InvitationAcceptCard({
         type="button"
         onClick={acceptInvite}
         disabled={busy}
-        className="btn-primary px-5 py-3 text-sm"
+        className="btn-primary btn-compact"
       >
         {busy ? "Accepting..." : "Accept invitation"}
       </button>
